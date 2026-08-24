@@ -1,0 +1,6 @@
+{
+  "name": "Avengers: Doomsday — Ultimate Marvel Watchlist",
+  "description": "A cinematic, collector-grade entertainment platform and interactive preparation watchlist for Avengers: Doomsday and the Multiverse Saga.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
