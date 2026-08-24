@@ -101,7 +101,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-3xl bg-[#090E18] border border-slate-700/80 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[85vh] ring-1 ring-emerald-500/30"
+        className="w-full max-w-3xl bg-[#090E18] border border-slate-700/80 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[85vh] ring-1 ring-slate-500/30"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
@@ -202,7 +202,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
               return (
                 <div
                   key={movie.id}
-                  className="flex items-center justify-between gap-3 p-2.5 sm:p-3 rounded-xl bg-[#0B1220]/80 hover:bg-[#0E1729] border border-slate-800/90 hover:border-emerald-500/60 transition-all group cursor-pointer"
+                  className="flex items-center justify-between gap-3 p-2.5 sm:p-3 rounded-xl bg-[#0B1220]/80 hover:bg-[#0E1729] border border-slate-800/90 hover:border-slate-500/60 transition-all group cursor-pointer"
                   onClick={() => {
                     playClickSound();
                     onClose();
@@ -212,7 +212,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                   {/* Left: Thumbnail & Info */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="w-12 sm:w-16 h-16 sm:h-20 rounded-lg overflow-hidden bg-slate-950 flex-shrink-0 border border-slate-700 relative">
-                      <img
+                      <img referrerPolicy="no-referrer"
                         src={getMoviePoster(movie.posterUrl, movie.universe)}
                         alt={movie.title}
                         className="w-full h-full object-cover"

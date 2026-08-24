@@ -215,7 +215,7 @@ export const DoomsdayTierListView: React.FC<DoomsdayTierListViewProps> = ({
                         key={movie.id}
                         className={`group relative flex flex-col rounded-xl overflow-hidden bg-[#090E18] border transition-all duration-200 ${
                           isWatched 
-                            ? 'border-emerald-700/80 ring-1 ring-emerald-500/30' 
+                            ? 'border-emerald-700/80 ring-1 ring-slate-500/30' 
                             : 'border-slate-800 hover:border-emerald-500 hover:-translate-y-1'
                         }`}
                       >
@@ -227,7 +227,7 @@ export const DoomsdayTierListView: React.FC<DoomsdayTierListViewProps> = ({
                             onSelectMovie(movie);
                           }}
                         >
-                          <img
+                          <img referrerPolicy="no-referrer"
                             src={getMoviePoster(movie.posterUrl, movie.universe)}
                             alt={movie.title}
                             className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${

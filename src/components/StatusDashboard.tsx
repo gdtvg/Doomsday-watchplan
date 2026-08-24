@@ -19,7 +19,7 @@ export const StatusDashboard: React.FC<StatusDashboardProps> = ({
   const { isMobile } = useDevice();
 
   return (
-    <section id="doomsday-status-dashboard" className="w-full bg-[#05080C] border-b border-slate-800/80 py-6 sm:py-8 px-4 sm:px-6">
+    <section id="doomsday-status-dashboard" className="w-full bg-[#040714] border-b border-slate-800/80 py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto space-y-5 sm:space-y-6">
         {/* Header Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -70,7 +70,7 @@ export const StatusDashboard: React.FC<StatusDashboardProps> = ({
         {/* 5 Big Stat Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 sm:gap-4">
           {/* Watched */}
-          <div className="bg-[#0C121D] border border-slate-800 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-emerald-500/50 shadow-md">
+          <div className="bg-[#1A1D29] border border-slate-800 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-emerald-500/50 shadow-md">
             <div className="flex items-center justify-between text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
               <span>Watched</span>
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -88,7 +88,7 @@ export const StatusDashboard: React.FC<StatusDashboardProps> = ({
           </div>
 
           {/* Remaining */}
-          <div className="bg-[#0C121D] border border-slate-800 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-md">
+          <div className="bg-[#1A1D29] border border-slate-800 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-md">
             <div className="flex items-center justify-between text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
               <span>Remaining</span>
               <Film className="w-4 h-4 text-slate-400" />
@@ -104,7 +104,7 @@ export const StatusDashboard: React.FC<StatusDashboardProps> = ({
           </div>
 
           {/* Essential Left */}
-          <div className="bg-[#0C121D] border border-emerald-800/40 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-emerald-500/60 relative overflow-hidden shadow-md">
+          <div className="bg-[#1A1D29] border border-emerald-800/40 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-slate-500/60 relative overflow-hidden shadow-md">
             <div className="flex items-center justify-between text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
               <span>Essential Left</span>
               <Crown className="w-4 h-4 text-emerald-400" />
@@ -120,7 +120,7 @@ export const StatusDashboard: React.FC<StatusDashboardProps> = ({
           </div>
 
           {/* Hours Left */}
-          <div className="bg-[#0C121D] border border-slate-800 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-md">
+          <div className="bg-[#1A1D29] border border-slate-800 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-md">
             <div className="flex items-center justify-between text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
               <span>Watch Hours</span>
               <Clock className="w-4 h-4 text-amber-400" />
@@ -136,7 +136,7 @@ export const StatusDashboard: React.FC<StatusDashboardProps> = ({
           </div>
 
           {/* Completion % */}
-          <div className="col-span-2 md:col-span-1 bg-[#0C121D] border border-emerald-700/50 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-emerald-400 relative overflow-hidden shadow-md">
+          <div className="col-span-2 md:col-span-1 bg-[#1A1D29] border border-emerald-700/50 rounded-xl p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-emerald-400 relative overflow-hidden shadow-md">
             <div className="flex items-center justify-between text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
               <span>Multiverse Ready</span>
               <Trophy className="w-4 h-4 text-amber-400" />
@@ -153,7 +153,7 @@ export const StatusDashboard: React.FC<StatusDashboardProps> = ({
         </div>
 
         {/* Progress Bar */}
-        <div className="bg-[#0C121D] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-2.5 shadow-md">
+        <div className="bg-[#1A1D29] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-2.5 shadow-md">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-200 uppercase tracking-wider">Road to Doomsday Progress</span>

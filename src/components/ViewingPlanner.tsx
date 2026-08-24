@@ -148,7 +148,7 @@ export const ViewingPlanner: React.FC<ViewingPlannerProps> = ({
   };
 
   return (
-    <section id="viewing-planner-page" className="w-full bg-[#05080C] py-6 sm:py-8 px-4 sm:px-6">
+    <section id="viewing-planner-page" className="w-full bg-[#040714] py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="space-y-2">
@@ -195,7 +195,7 @@ export const ViewingPlanner: React.FC<ViewingPlannerProps> = ({
         {/* 2-Column Controls & Projections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Left: Interactive Controls */}
-          <div className="bg-[#0C121D] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-6 shadow-md">
+          <div className="bg-[#1A1D29] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-6 shadow-md">
             <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-tight flex items-center gap-2">
               <Clock className="w-4 h-4 text-emerald-400" />
               Adjust Your Weekly Pace
@@ -261,7 +261,7 @@ export const ViewingPlanner: React.FC<ViewingPlannerProps> = ({
           </div>
 
           {/* Right: Calculations & Metrics */}
-          <div className="bg-[#0C121D] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-md flex flex-col justify-between">
+          <div className="bg-[#1A1D29] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-md flex flex-col justify-between">
             <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-tight flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
               Marathon Projections

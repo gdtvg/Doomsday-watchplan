@@ -68,7 +68,7 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl my-auto bg-[#070B14] border border-slate-700/80 rounded-2xl overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-1 ring-emerald-500/40"
+        className="relative w-full max-w-5xl my-auto bg-[#070B14] border border-slate-700/80 rounded-2xl overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.95)] ring-1 ring-slate-500/40"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Ambient Backlight Glow (Disney+ / Theater Mode) */}
@@ -77,7 +77,7 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
         {/* Video Player Frame with 16:9 ratio */}
         <div className="relative aspect-video w-full bg-black">
           <iframe
-            src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1&mute=${isMuted ? '1' : '0'}&controls=1`}
+            src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&mute=${isMuted ? '1' : '0'}&controls=1`}
             title={currentMovie.title}
             className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -227,7 +227,7 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
                   }}
                   className="group relative rounded-lg overflow-hidden border border-slate-800 hover:border-emerald-400 transition-all text-left bg-slate-950 aspect-[16/9] cursor-pointer hover:scale-105"
                 >
-                  <img
+                  <img referrerPolicy="no-referrer"
                     src={getMovieBackdrop(rel.backdropUrl, rel.posterUrl, rel.universe)}
                     alt={rel.title}
                     className="w-full h-full object-cover opacity-75 group-hover:opacity-100 transition-opacity"

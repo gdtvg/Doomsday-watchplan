@@ -75,7 +75,7 @@ const HorizontalRow: React.FC<HorizontalRowProps> = ({
             <h3 className="text-sm sm:text-base lg:text-lg font-black text-slate-100 tracking-tight flex items-center gap-2">
               <span>{title}</span>
               {isTop10 && (
-                <span className="text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500 text-black tracking-wider shadow-[0_0_10px_rgba(16,185,129,0.5)]">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white text-black tracking-wider shadow-sm">
                   TOP 10
                 </span>
               )}
@@ -94,14 +94,14 @@ const HorizontalRow: React.FC<HorizontalRowProps> = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => scroll('left')}
-              className="p-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+              className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
               title="Nach links"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="p-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+              className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
               title="Nach rechts"
             >
               <ChevronRight className="w-4 h-4" />
@@ -186,44 +186,31 @@ export const ContentRows: React.FC<ContentRowsProps> = ({
     .slice(0, 10);
 
   // Continue Watching / Next Up
-  const continueWatching = titles.filter(t => !userData[t.id]?.watched && !t.isUpcoming).slice(0, 8);
+  const continueWatching = titles.filter(t => !userData[t.id]?.watched && (!t.releaseDate || new Date(t.releaseDate).getTime() < Date.now())).slice(0, 8);
 
-  // Doctor Doom Essentials
-  const doomsdayEssentials = titles.filter(t => t.priority === 'ESSENTIAL');
+  // Neu auf Disney+ & Aktuell (Phase 5)
+  const phase5 = titles.filter(t => t.phase === 'Phase 5' && (!t.releaseDate || new Date(t.releaseDate).getTime() < Date.now())).sort((a,b) => (b.releaseOrderIndex || 0) - (a.releaseOrderIndex || 0));
 
-  // TVA, Multiverse & Incursions
-  const multiverseAndIncursions = titles.filter(t => 
-    t.tags.includes('Incursions') || 
-    t.tags.includes('Multiverse') || 
-    t.tags.includes('TVA') || 
-    t.tags.includes('Anchor Being')
-  );
+  // Kommende Kinostarts
+  const upcomingTitles = titles.filter(t => t.releaseDate && new Date(t.releaseDate).getTime() > Date.now());
 
-  // Fantastic Four & First Family
-  const fantasticFourTitles = titles.filter(t => 
-    t.universe === 'FANTASTIC FOUR' || 
-    t.tags.includes('Reed Richards') || 
-    t.tags.includes('First Steps')
-  );
+  // Infinity Saga (Phase 1-3)
+  const infinitySaga = titles.filter(t => ['Phase 1', 'Phase 2', 'Phase 3'].includes(t.phase)).sort((a,b) => (a.releaseOrderIndex || 0) - (b.releaseOrderIndex || 0));
 
-  // Fox X-Men Universe
-  const mutantTitles = titles.filter(t => 
-    t.universe === 'X-MEN' || 
-    t.tags.includes('Mutants') || 
-    t.tags.includes('Fox Universe')
-  );
+  // MCU Phase 4
+  const phase4 = titles.filter(t => t.phase === 'Phase 4').sort((a,b) => (a.releaseOrderIndex || 0) - (b.releaseOrderIndex || 0));
 
-  // Spider-Man & Multiversal Variants
-  const spiderTitles = titles.filter(t => 
-    t.universe === 'SPIDER-MAN' || 
-    t.tags.includes('Spider-Verse')
-  );
+  // Spider-Verse & Sony
+  const spiderTitles = titles.filter(t => t.universe === 'SPIDER-MAN' || t.tags.includes('Spider-Verse'));
 
-  // Upcoming Phase 6 Releases
-  const upcomingTitles = titles.filter(t => t.isUpcoming);
+  // X-Men Legacy
+  const mutantTitles = titles.filter(t => t.universe === 'X-MEN' || t.tags.includes('Mutants') || t.tags.includes('Fox Universe'));
+
+  // Fantastic Four
+  const fantasticFourTitles = titles.filter(t => t.universe === 'FANTASTIC FOUR' || t.tags.includes('Reed Richards') || t.tags.includes('First Steps'));
 
   return (
-    <div id="content-rows-container" className="space-y-4 sm:space-y-6 py-2 sm:py-4 bg-[#05080C]">
+    <div id="content-rows-container" className="space-y-4 sm:space-y-6 py-2 sm:py-4 bg-[#040714]">
       
       {/* Top 10 Row */}
       <HorizontalRow
@@ -258,86 +245,113 @@ export const ContentRows: React.FC<ContentRowsProps> = ({
         />
       )}
 
-      {/* Doomsday Pflicht */}
-      <HorizontalRow
-        title="Doctor Doom Pflichtprogramm"
-        subtitle="Unerlässliche Grundlagen für Incursions und Doctor Dooms Aufstieg"
-        icon={<Flame className="w-5 h-5 text-emerald-400" />}
-        items={doomsdayEssentials}
-        userData={userData}
-        onToggleWatched={onToggleWatched}
-        onTogglePostCredit={() => {}}
-        onSetRating={onSetRating}
-        onToggleFavorite={onToggleFavorite}
-        onSelectMovie={onSelectMovie}
-        onOpenTrailer={onOpenTrailer}
-      />
+      {/* Neu auf Disney+ / Phase 5 */}
+      {phase5.length > 0 && (
+        <HorizontalRow
+          title="Marvel Cinematic Universe: Phase 5"
+          subtitle="Die neuesten Filme und Serien des MCU"
+          icon={<Sparkles className="w-5 h-5 text-purple-400" />}
+          items={phase5}
+          userData={userData}
+          onToggleWatched={onToggleWatched}
+          onTogglePostCredit={() => {}}
+          onSetRating={onSetRating}
+          onToggleFavorite={onToggleFavorite}
+          onSelectMovie={onSelectMovie}
+          onOpenTrailer={onOpenTrailer}
+        />
+      )}
 
-      {/* TVA & Incursions */}
-      <HorizontalRow
-        title="TVA, Die Leere & Multiversum"
-        subtitle="Loki, Yggdrasil, Ankerwesen und kollidierende Zeitstrahlen"
-        icon={<Sparkles className="w-5 h-5 text-purple-400" />}
-        items={multiverseAndIncursions}
-        userData={userData}
-        onToggleWatched={onToggleWatched}
-        onTogglePostCredit={() => {}}
-        onSetRating={onSetRating}
-        onToggleFavorite={onToggleFavorite}
-        onSelectMovie={onSelectMovie}
-        onOpenTrailer={onOpenTrailer}
-      />
+      {/* Infinity Saga */}
+      {infinitySaga.length > 0 && (
+        <HorizontalRow
+          title="The Infinity Saga"
+          subtitle="Phase 1-3: Die Avengers und Thanos"
+          icon={<Crown className="w-5 h-5 text-amber-500" />}
+          items={infinitySaga}
+          userData={userData}
+          onToggleWatched={onToggleWatched}
+          onTogglePostCredit={() => {}}
+          onSetRating={onSetRating}
+          onToggleFavorite={onToggleFavorite}
+          onSelectMovie={onSelectMovie}
+          onOpenTrailer={onOpenTrailer}
+        />
+      )}
 
-      {/* Fantastic Four & First Family */}
-      <HorizontalRow
-        title="Fantastic Four & Council of Reeds"
-        subtitle="Reed Richards, Galactus und die Rivalität mit Doctor Doom"
-        icon={<Layers className="w-5 h-5 text-sky-400" />}
-        items={fantasticFourTitles}
-        userData={userData}
-        onToggleWatched={onToggleWatched}
-        onTogglePostCredit={() => {}}
-        onSetRating={onSetRating}
-        onToggleFavorite={onToggleFavorite}
-        onSelectMovie={onSelectMovie}
-        onOpenTrailer={onOpenTrailer}
-      />
-
-      {/* Mutants & Fox X-Men */}
-      <HorizontalRow
-        title="Fox X-Men & Mutanten Legacy"
-        subtitle="Earth-10005, Logan, Deadpool, Weapon X und die Mutanten-Kollision"
-        icon={<Zap className="w-5 h-5 text-amber-400" />}
-        items={mutantTitles}
-        userData={userData}
-        onToggleWatched={onToggleWatched}
-        onTogglePostCredit={() => {}}
-        onSetRating={onSetRating}
-        onToggleFavorite={onToggleFavorite}
-        onSelectMovie={onSelectMovie}
-        onOpenTrailer={onOpenTrailer}
-      />
+      {/* Phase 4 */}
+      {phase4.length > 0 && (
+        <HorizontalRow
+          title="Marvel Cinematic Universe: Phase 4"
+          subtitle="Der Beginn der Multiverse Saga"
+          icon={<Layers className="w-5 h-5 text-sky-400" />}
+          items={phase4}
+          userData={userData}
+          onToggleWatched={onToggleWatched}
+          onTogglePostCredit={() => {}}
+          onSetRating={onSetRating}
+          onToggleFavorite={onToggleFavorite}
+          onSelectMovie={onSelectMovie}
+          onOpenTrailer={onOpenTrailer}
+        />
+      )}
 
       {/* Spider-Man Multiverse */}
-      <HorizontalRow
-        title="Spider-Man & Spider-Verse"
-        subtitle="Das Netz des Lebens, Dimensionssprünge und vertraute Schurken"
-        icon={<Film className="w-5 h-5 text-indigo-400" />}
-        items={spiderTitles}
-        userData={userData}
-        onToggleWatched={onToggleWatched}
-        onTogglePostCredit={() => {}}
-        onSetRating={onSetRating}
-        onToggleFavorite={onToggleFavorite}
-        onSelectMovie={onSelectMovie}
-        onOpenTrailer={onOpenTrailer}
-      />
+      {spiderTitles.length > 0 && (
+        <HorizontalRow
+          title="Spider-Man & Spider-Verse"
+          subtitle="Das Netz des Lebens und Sony's Spider-Man Universe"
+          icon={<Film className="w-5 h-5 text-indigo-400" />}
+          items={spiderTitles}
+          userData={userData}
+          onToggleWatched={onToggleWatched}
+          onTogglePostCredit={() => {}}
+          onSetRating={onSetRating}
+          onToggleFavorite={onToggleFavorite}
+          onSelectMovie={onSelectMovie}
+          onOpenTrailer={onOpenTrailer}
+        />
+      )}
+
+      {/* Mutants & Fox X-Men */}
+      {mutantTitles.length > 0 && (
+        <HorizontalRow
+          title="X-Men Legacy"
+          subtitle="Fox-Universum und die Mutanten-Kollision"
+          icon={<Zap className="w-5 h-5 text-yellow-400" />}
+          items={mutantTitles}
+          userData={userData}
+          onToggleWatched={onToggleWatched}
+          onTogglePostCredit={() => {}}
+          onSetRating={onSetRating}
+          onToggleFavorite={onToggleFavorite}
+          onSelectMovie={onSelectMovie}
+          onOpenTrailer={onOpenTrailer}
+        />
+      )}
+
+      {/* Fantastic Four & First Family */}
+      {fantasticFourTitles.length > 0 && (
+        <HorizontalRow
+          title="Fantastic Four"
+          subtitle="Marvel's First Family"
+          icon={<Layers className="w-5 h-5 text-blue-400" />}
+          items={fantasticFourTitles}
+          userData={userData}
+          onToggleWatched={onToggleWatched}
+          onTogglePostCredit={() => {}}
+          onSetRating={onSetRating}
+          onToggleFavorite={onToggleFavorite}
+          onSelectMovie={onSelectMovie}
+          onOpenTrailer={onOpenTrailer}
+        />
+      )}
 
       {/* Upcoming Slate */}
       {upcomingTitles.length > 0 && (
         <HorizontalRow
-          title="Kommende Kinostarts: Phase 6"
-          subtitle="Die nächsten Marvel Studios Großprojekte vor Avengers: Doomsday"
+          title="Kommende Kinostarts"
+          subtitle="Die nächsten Marvel Studios Großprojekte"
           icon={<Flame className="w-5 h-5 text-rose-400" />}
           items={upcomingTitles}
           userData={userData}

@@ -79,8 +79,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       id="main-header" 
       className={`sticky top-0 z-40 w-full transition-all duration-300 ${
         isScrolled 
-          ? 'bg-[#05080C]/95 backdrop-blur-xl border-b border-slate-800/90 shadow-[0_10px_30px_rgba(0,0,0,0.85)]' 
-          : 'bg-gradient-to-b from-[#05080C]/95 via-[#05080C]/80 to-transparent border-b border-slate-800/30'
+          ? 'bg-[#040714]/95 backdrop-blur-xl border-b border-slate-800/90 shadow-[0_10px_30px_rgba(0,0,0,0.85)]' 
+          : 'bg-gradient-to-b from-[#040714]/95 via-[#040714]/80 to-transparent border-b border-slate-800/30'
       }`}
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-3">
@@ -89,16 +89,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleNavClick('home')}
           className="flex items-center gap-2.5 cursor-pointer group select-none flex-shrink-0"
         >
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-emerald-600 via-emerald-950 to-black border border-emerald-500/80 flex items-center justify-center text-white shadow-[0_0_15px_rgba(16,185,129,0.4)] group-hover:scale-105 transition-transform">
-            <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-300" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-slate-800 via-slate-900 to-black border border-slate-700 flex items-center justify-center text-white shadow-md group-hover:scale-105 group-hover:border-slate-500 transition-all">
+            <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300 group-hover:text-white transition-colors" />
           </div>
           <div>
             <div className="flex items-center gap-1.5 leading-none">
-              <span className="text-xs sm:text-sm font-black tracking-[0.18em] text-white uppercase font-sans">
-                MARVEL <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">DOOMSDAY</span>
+              <span className="text-xs sm:text-sm font-black tracking-[0.1em] text-white uppercase font-sans">
+                <span className="bg-[#E23636] text-white px-1.5 py-[1px] rounded-sm mr-1.5 inline-block text-[10px] sm:text-[11px]">MARVEL</span>
+                <span className="text-white">DOOMSDAY</span>
               </span>
             </div>
-            <span className="text-[8px] sm:text-[9px] font-extrabold tracking-widest text-slate-400 uppercase block mt-0.5">
+            <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-slate-400 uppercase block mt-1">
               STREAMING & PREP HUB
             </span>
           </div>
@@ -212,7 +213,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       )}
 
       {/* Mobile Bottom Fixed Streaming Dock Bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#05080C]/95 backdrop-blur-xl border-t border-slate-800/90 pt-1 pb-[max(env(safe-area-inset-bottom),0.5rem)] px-3 flex items-center justify-around shadow-[0_-8px_25px_rgba(0,0,0,0.95)]">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#040714]/95 backdrop-blur-xl border-t border-slate-800/90 pt-1 pb-[max(env(safe-area-inset-bottom),0.5rem)] px-3 flex items-center justify-around shadow-[0_-8px_25px_rgba(0,0,0,0.95)]">
         <button
           onClick={() => handleNavClick('home')}
           className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] gap-0.5 text-[10px] font-black uppercase transition-all cursor-pointer ${

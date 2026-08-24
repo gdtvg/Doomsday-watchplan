@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MarvelTitle, UserTitleData, UniverseType, PriorityLevel, MediaType } from '../types';
 import { MovieCard } from './MovieCard';
-import { getMoviePoster, FALLBACK_POSTERS } from '../utils/imageHelper';
+import { getMoviePoster, getMovieLogo, FALLBACK_POSTERS } from '../utils/imageHelper';
 import { 
   Search, 
   Grid, 
@@ -159,7 +159,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Titel, Charakter, Inkursion oder Doctor Doom suchen..."
-            className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-[#0C121D] border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner"
+            className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-[#1A1D29] border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-slate-500 transition-all shadow-inner"
           />
           {searchQuery && (
             <button
@@ -180,7 +180,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
               playClickSound();
               setActiveUniverse(e.target.value as UniverseType | 'ALL');
             }}
-            className="px-3 py-1.5 bg-[#0C121D] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
+            className="px-3 py-1.5 bg-[#1A1D29] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
           >
             <option value="ALL">Alle Universen</option>
             <option value="MCU">MCU (Earth-616)</option>
@@ -197,7 +197,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
               playClickSound();
               setActivePriority(e.target.value as PriorityLevel | 'ALL');
             }}
-            className="px-3 py-1.5 bg-[#0C121D] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
+            className="px-3 py-1.5 bg-[#1A1D29] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
           >
             <option value="ALL">Alle Relevanz-Stufen</option>
             <option value="ESSENTIAL">Doomsday Pflicht (S-Tier)</option>
@@ -214,7 +214,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
               playClickSound();
               setActiveFormat(e.target.value as MediaType | 'ALL');
             }}
-            className="px-3 py-1.5 bg-[#0C121D] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
+            className="px-3 py-1.5 bg-[#1A1D29] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
           >
             <option value="ALL">Alle Formate</option>
             <option value="FILM">Spielfilme</option>
@@ -228,7 +228,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
               playClickSound();
               setActiveWatchStatus(e.target.value as any);
             }}
-            className="px-3 py-1.5 bg-[#0C121D] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
+            className="px-3 py-1.5 bg-[#1A1D29] border border-slate-800 rounded-lg text-xs font-bold text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
           >
             <option value="ALL">Alle Status</option>
             <option value="UNWATCHED">Noch nicht gesehen</option>
@@ -251,7 +251,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
 
       {/* Grid Content Area */}
       {titles.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-[#090F1B] border border-slate-800 space-y-3">
+        <div className="p-12 text-center rounded-2xl bg-[#1A1D29] border border-slate-800 space-y-3">
           <Film className="w-10 h-10 text-slate-600 mx-auto" />
           <h3 className="text-base font-bold text-white uppercase">Keine passenden Titel gefunden</h3>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -294,12 +294,12 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
                   playClickSound();
                   onSelectMovie(movie);
                 }}
-                className={`group relative rounded-xl overflow-hidden bg-[#0C121D] border cursor-pointer transition-all duration-300 hover:scale-105 ${
-                  isWatched ? 'border-emerald-600/70 ring-1 ring-emerald-500/30' : 'border-slate-800 hover:border-emerald-500/70'
+                className={`group relative rounded-xl overflow-hidden bg-[#1A1D29] border cursor-pointer transition-all duration-300 hover:scale-105 ${
+                  isWatched ? 'border-emerald-600/70 ring-1 ring-slate-500/30' : 'border-slate-800 hover:border-emerald-500/70'
                 }`}
               >
                 <div className="aspect-[2/3] w-full overflow-hidden bg-slate-950 relative">
-                  <img
+                  <img referrerPolicy="no-referrer"
                     src={getMoviePoster(movie.posterUrl, movie.universe, movie.id)}
                     alt={movie.title}
                     loading="lazy"
@@ -324,9 +324,18 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
                     <span className="text-[8px] font-black uppercase text-emerald-400 block tracking-wider">
                       {movie.universe}
                     </span>
-                    <h4 className="text-[11px] font-bold text-white line-clamp-1 leading-tight">
-                      {movie.title}
-                    </h4>
+                    {getMovieLogo(movie.id) ? (
+                      <img 
+                        src={getMovieLogo(movie.id)} 
+                        alt={movie.title} 
+                        className="h-4 sm:h-5 object-contain object-left mt-0.5 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" 
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <h4 className="text-[11px] font-bold text-white line-clamp-1 leading-tight">
+                        {movie.title}
+                      </h4>
+                    )}
                   </div>
                 </div>
               </div>
@@ -345,13 +354,13 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
                   playClickSound();
                   onSelectMovie(movie);
                 }}
-                className={`flex items-center justify-between p-3 rounded-xl bg-[#0C121D] border transition-all cursor-pointer ${
-                  isWatched ? 'border-emerald-600/50 bg-[#07130E]' : 'border-slate-800 hover:border-slate-700'
+                className={`flex items-center justify-between p-3 rounded-xl bg-[#1A1D29] border transition-all cursor-pointer ${
+                  isWatched ? 'border-slate-600/50 bg-[#1A1D29]' : 'border-slate-800 hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-12 h-16 rounded-md overflow-hidden flex-shrink-0 bg-slate-950">
-                    <img
+                    <img referrerPolicy="no-referrer"
                       src={getMoviePoster(movie.posterUrl, movie.universe, movie.id)}
                       alt={movie.title}
                       className="w-full h-full object-cover object-center"
@@ -373,9 +382,18 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
                         {movie.year} • {movie.runtimeMinutes}m
                       </span>
                     </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-white truncate">
-                      {movie.title}
-                    </h4>
+                    {getMovieLogo(movie.id) ? (
+                      <img 
+                        src={getMovieLogo(movie.id)}
+                        alt={movie.title}
+                        className="h-6 sm:h-8 object-contain object-left drop-shadow-md my-1"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <h4 className="text-xs sm:text-sm font-bold text-white truncate">
+                        {movie.title}
+                      </h4>
+                    )}
                     <p className="text-[11px] text-slate-400 truncate max-w-lg">
                       {movie.whyItMatters}
                     </p>

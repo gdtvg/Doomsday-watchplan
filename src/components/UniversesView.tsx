@@ -9,7 +9,7 @@ interface UniversesViewProps {
 
 export const UniversesView: React.FC<UniversesViewProps> = ({ onSelectUniverseFilter }) => {
   return (
-    <section id="universes-explore-section" className="w-full bg-[#05080C] py-6 sm:py-8 px-4 sm:px-6">
+    <section id="universes-explore-section" className="w-full bg-[#040714] py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="space-y-2">
@@ -29,7 +29,7 @@ export const UniversesView: React.FC<UniversesViewProps> = ({ onSelectUniverseFi
           {UNIVERSES_DATA.map((u) => (
             <div
               key={u.id}
-              className="bg-[#0C121D] border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4 hover:border-emerald-500/60 transition-all group shadow-md"
+              className="bg-[#1A1D29] border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4 hover:border-slate-500/60 transition-all group shadow-md"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">

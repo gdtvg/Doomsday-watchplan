@@ -135,7 +135,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#05080C] text-[#F5F5F5] flex flex-col font-sans selection:bg-emerald-600 selection:text-white pb-24 xl:pb-0">
+    <div className="min-h-screen bg-[#040714] text-[#F5F5F5] flex flex-col font-sans selection:bg-brand-600 selection:text-white pb-24 xl:pb-0 relative overflow-x-hidden">
+      {/* Main Container */}
+      <div className="relative z-10 flex flex-col min-h-screen">
       {/* Top Navbar (Disney+ / Netflix Translucent Glass Bar) */}
       <Navbar
         activeTab={activeTab}
@@ -366,6 +368,7 @@ export default function App() {
         }}
         onOpenAbout={() => setIsAboutOpen(true)}
       />
+      </div>
     </div>
   );
 }

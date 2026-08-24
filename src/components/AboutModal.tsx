@@ -17,7 +17,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-2xl bg-[#080D14] border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-[0_25px_70px_rgba(0,0,0,0.95)] max-h-[90vh] overflow-y-auto ring-1 ring-emerald-500/20"
+        className="relative w-full max-w-2xl bg-[#080D14] border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-[0_25px_70px_rgba(0,0,0,0.95)] max-h-[90vh] overflow-y-auto ring-1 ring-slate-500/20"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -43,7 +43,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <strong className="text-white font-bold">Avengers: Doomsday Ultimate Watchlist</strong> is a collector-grade, dark-themed entertainment companion and preparation system for the climax of Marvel Studios’ Multiverse Saga.
           </p>
 
-          <div className="bg-[#0C121D] p-4 rounded-xl border border-slate-800 space-y-3">
+          <div className="bg-[#1A1D29] p-4 rounded-xl border border-slate-800 space-y-3">
             <h4 className="font-bold text-white flex items-center gap-2 text-xs uppercase tracking-wider text-emerald-400">
               <Code2 className="w-4 h-4" />
               Developer & Customization Guide

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MarvelTitle, UserTitleData } from '../types';
 import { PRIORITY_CONFIG, FACT_STATUS_CONFIG } from '../data/config';
-import { getMovieBackdrop, getMoviePoster, FALLBACK_BACKDROPS, FALLBACK_POSTERS } from '../utils/imageHelper';
+import { getMovieBackdrop, getMoviePoster, getMovieLogo, FALLBACK_BACKDROPS, FALLBACK_POSTERS } from '../utils/imageHelper';
 import { MARVEL_TITLES } from '../data/movies';
 import { 
   X, 
@@ -104,6 +104,8 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
   };
 
   const scoreDisplay = movie.ratingScore || (movie.priority === 'ESSENTIAL' ? 8.4 : 7.8);
+  
+  const isUpcoming = movie.id === 'captain-america-brave-new-world' || movie.id === 'thunderbolts-asterisk' || movie.id === 'fantastic-four-first-steps' || movie.id === 'avengers-doomsday' || movie.id === 'avengers-secret-wars' || movie.id === 'blade' || movie.id === 'spider-man-4' || (movie.releaseDate ? new Date(movie.releaseDate).getTime() > Date.now() : false);
 
   return (
     <div 
@@ -113,7 +115,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
     >
       <div 
         id={`movie-detail-${movie.id}`}
-        className="relative w-full max-w-5xl bg-[#080C14] border border-slate-700/80 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.98)] overflow-hidden my-auto max-h-[94vh] flex flex-col ring-1 ring-emerald-500/20"
+        className="relative w-full max-w-5xl bg-[#080C14] border border-slate-700/80 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.98)] overflow-hidden my-auto max-h-[94vh] flex flex-col ring-1 ring-slate-500/20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Floating Toast for Link Copying */}
@@ -126,7 +128,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
 
         {/* 1. Backdrop Hero Banner (Dulo / Streaming High-Res Banner) */}
         <div className="relative h-48 sm:h-64 md:h-72 w-full overflow-hidden bg-slate-950 flex-shrink-0">
-          <img
+          <img referrerPolicy="no-referrer"
             src={getMovieBackdrop(movie.backdropUrl, movie.posterUrl, movie.universe)}
             alt={movie.title}
             className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
@@ -182,7 +184,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
             {/* Left Column: 2:3 Vertical Poster Card & Action Hub */}
             <div className="w-40 sm:w-48 md:w-56 flex-shrink-0 mx-auto md:mx-0 space-y-3">
               <div className="aspect-[2/3] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-700/80 shadow-[0_12px_40px_rgba(0,0,0,0.9)] relative group">
-                <img
+                <img referrerPolicy="no-referrer"
                   src={getMoviePoster(movie.posterUrl, movie.universe, movie.id)}
                   alt={movie.title}
                   className="w-full h-full object-cover object-center"
@@ -216,7 +218,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                   className="w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider text-black bg-white hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.7)] hover:scale-102 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-black ml-0.5" />
-                  <span>Play Trailer</span>
+                  <span>{isUpcoming ? 'Leaked / Concept Trailer' : 'Play Trailer'}</span>
                 </button>
               )}
 
@@ -304,9 +306,18 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tight font-sans leading-tight pt-1">
-                  {movie.title}
-                </h1>
+                {getMovieLogo(movie.id) ? (
+                  <img 
+                    src={getMovieLogo(movie.id)}
+                    alt={movie.title}
+                    className="h-16 sm:h-20 lg:h-24 object-contain object-left drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] filter pt-2 pb-1"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tight font-sans leading-tight pt-1">
+                    {movie.title}
+                  </h1>
+                )}
 
                 {movie.tagline && (
                   <p className="text-xs sm:text-sm font-semibold italic text-slate-400">
@@ -606,7 +617,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                           className="group rounded-xl overflow-hidden bg-[#0C121E] border border-slate-800 hover:border-emerald-500/80 transition-all cursor-pointer shadow-md"
                         >
                           <div className="aspect-[16/9] w-full overflow-hidden bg-slate-950 relative">
-                            <img
+                            <img referrerPolicy="no-referrer"
                               src={getMovieBackdrop(sim.backdropUrl, sim.posterUrl, sim.universe)}
                               alt={sim.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

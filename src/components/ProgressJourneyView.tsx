@@ -64,7 +64,7 @@ export const ProgressJourneyView: React.FC<ProgressJourneyViewProps> = ({
   ];
 
   return (
-    <section id="progress-journey-section" className="w-full bg-[#05080C] py-6 sm:py-8 px-4 sm:px-6">
+    <section id="progress-journey-section" className="w-full bg-[#040714] py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="space-y-2">
@@ -115,7 +115,7 @@ export const ProgressJourneyView: React.FC<ProgressJourneyViewProps> = ({
         </div>
 
         {/* Universe Progress Breakdown */}
-        <div className="bg-[#0C121D] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-md">
+        <div className="bg-[#1A1D29] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-md">
           <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-tight flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-emerald-400" />
             Franchise & Universe Breakdown
@@ -145,7 +145,7 @@ export const ProgressJourneyView: React.FC<ProgressJourneyViewProps> = ({
         </div>
 
         {/* Data Persistence, Backup & Cloud Export */}
-        <div className="bg-[#0C121D] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-md">
+        <div className="bg-[#1A1D29] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-md">
           <div className="flex items-center justify-between">
             <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-tight flex items-center gap-2">
               <Download className="w-4 h-4 text-emerald-400" />
@@ -202,7 +202,7 @@ export const ProgressJourneyView: React.FC<ProgressJourneyViewProps> = ({
             onClick={() => setConfirmReset(false)}
           >
             <div 
-              className="bg-[#0C121D] border border-slate-700 p-6 rounded-2xl max-w-md w-full text-center space-y-4 shadow-2xl"
+              className="bg-[#1A1D29] border border-slate-700 p-6 rounded-2xl max-w-md w-full text-center space-y-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-12 rounded-full bg-rose-950 border border-rose-600/50 flex items-center justify-center text-rose-400 mx-auto">

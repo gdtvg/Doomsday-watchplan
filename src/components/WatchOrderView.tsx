@@ -62,7 +62,7 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
   const routeProgressPercent = routeTitles.length > 0 ? Math.round((watchedInRouteCount / routeTitles.length) * 100) : 0;
 
   return (
-    <section id="watch-order-page" className="w-full bg-[#05080C] py-6 sm:py-8 px-4 sm:px-6">
+    <section id="watch-order-page" className="w-full bg-[#040714] py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="space-y-2">
@@ -87,8 +87,8 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
             }}
             className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
               watchOrderRoute === 'B_DOOMSDAY'
-                ? 'bg-[#0A1A12] border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] ring-1 ring-emerald-500'
-                : 'bg-[#0C121D] border-slate-800 hover:border-slate-700'
+                ? 'bg-[#0A1A12] border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] ring-1 ring-slate-500'
+                : 'bg-[#1A1D29] border-slate-800 hover:border-slate-700'
             }`}
           >
             <div className="space-y-2">
@@ -119,7 +119,7 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
             className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
               watchOrderRoute === 'A_MCU'
                 ? 'bg-[#161017] border-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.3)] ring-1 ring-rose-500'
-                : 'bg-[#0C121D] border-slate-800 hover:border-slate-700'
+                : 'bg-[#1A1D29] border-slate-800 hover:border-slate-700'
             }`}
           >
             <div className="space-y-2">
@@ -150,7 +150,7 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
             className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
               watchOrderRoute === 'C_MULTIVERSE'
                 ? 'bg-[#121422] border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] ring-1 ring-indigo-500'
-                : 'bg-[#0C121D] border-slate-800 hover:border-slate-700'
+                : 'bg-[#1A1D29] border-slate-800 hover:border-slate-700'
             }`}
           >
             <div className="space-y-2">
@@ -174,7 +174,7 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
         </div>
 
         {/* Sorting Toggles & Status Pill */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0C121D] p-3 sm:p-4 rounded-xl border border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#1A1D29] p-3 sm:p-4 rounded-xl border border-slate-800">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Sortierung:</span>
             <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5">
@@ -236,8 +236,8 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
                   playClickSound();
                   onSelectMovie(movie);
                 }}
-                className={`group flex items-center justify-between p-3 sm:p-4 rounded-xl bg-[#0C121D] border transition-all cursor-pointer ${
-                  isWatched ? 'border-emerald-600/50 bg-[#07130E]' : 'border-slate-800 hover:border-emerald-500/60'
+                className={`group flex items-center justify-between p-3 sm:p-4 rounded-xl bg-[#1A1D29] border transition-all cursor-pointer ${
+                  isWatched ? 'border-slate-600/50 bg-[#1A1D29]' : 'border-slate-800 hover:border-slate-500/60'
                 }`}
               >
                 <div className="flex items-center gap-3 sm:gap-4 min-w-0">
@@ -246,7 +246,7 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
                   </span>
 
                   <div className="w-14 sm:w-16 aspect-[2/3] rounded-lg overflow-hidden bg-slate-950 flex-shrink-0">
-                    <img
+                    <img referrerPolicy="no-referrer"
                       src={posterSrc}
                       alt={movie.title}
                       className="w-full h-full object-cover object-center"

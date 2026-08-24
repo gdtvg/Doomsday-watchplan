@@ -4,7 +4,7 @@ import { Newspaper, ShieldCheck, Crown, ExternalLink, Sparkles } from 'lucide-re
 
 export const MarvelNewsView: React.FC = () => {
   return (
-    <section id="marvel-news-section" className="w-full bg-[#05080C] py-6 sm:py-8 px-4 sm:px-6">
+    <section id="marvel-news-section" className="w-full bg-[#040714] py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="space-y-2">
@@ -24,7 +24,7 @@ export const MarvelNewsView: React.FC = () => {
           {MARVEL_NEWS.map((item) => (
             <div
               key={item.id}
-              className="bg-[#0C121D] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-3 hover:border-emerald-500/50 transition-all shadow-md"
+              className="bg-[#1A1D29] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-3 hover:border-emerald-500/50 transition-all shadow-md"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
