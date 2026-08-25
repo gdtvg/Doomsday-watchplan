@@ -17,6 +17,25 @@ export type PriorityLevel =
 
 export type MediaType = 'FILM' | 'SERIES' | 'SPECIAL';
 
+export type WatchStatus = 'UNWATCHED' | 'IN_PROGRESS' | 'WATCHED' | 'REWATCH';
+
+export type StreamingProviderName = 
+  | 'Disney+' 
+  | 'Netflix' 
+  | 'Prime Video' 
+  | 'Apple TV+' 
+  | 'Paramount+' 
+  | 'Max' 
+  | 'YouTube';
+
+export interface StreamingInfo {
+  stream?: StreamingProviderName[];
+  buyRent?: string[];
+  subscriptionRequired?: boolean;
+  statusLabel?: 'STREAMING' | 'KAUFEN / LEIHEN' | 'KINO' | 'IN PRODUKTION' | 'NICHT VERFÜGBAR';
+  directLink?: string;
+}
+
 export type PhaseType = 
   | 'Phase 1' 
   | 'Phase 2' 
@@ -78,21 +97,30 @@ export interface MarvelTitle {
   posterUrl: string;
   backdropUrl?: string;
   trailerYoutubeId?: string;
+  hintClips?: {
+    title: string;
+    youtubeId: string;
+    description: string;
+    tag: string;
+  }[];
   postCredit: PostCreditScene;
   storyOrderIndex: number;      // Chronological MCU / Multiverse order
   releaseOrderIndex: number;    // Theatrical / Broadcast release order
   doomsdayOrderIndex: number;   // Fast-track Doomsday curation order
   isUpcoming?: boolean;
   streamingPlatform?: string;
+  streaming?: StreamingInfo;
 }
 
 export interface UserTitleData {
   watched: boolean;
+  watchStatus?: WatchStatus;
   watchedPostCredit?: boolean;
   userRating?: number; // 1 to 5 stars
   isFavorite?: boolean;
   notes?: string;
   watchedAt?: string;
+  progressMinutes?: number;
 }
 
 export interface UserWatchlistState {
@@ -102,7 +130,8 @@ export interface UserWatchlistState {
   activeUniverseFilter: UniverseType | 'ALL';
   activePriorityFilter: PriorityLevel | 'ALL';
   activeFormatFilter: MediaType | 'ALL';
-  activeWatchStatusFilter: 'ALL' | 'UNWATCHED' | 'WATCHED';
+  activeWatchStatusFilter: 'ALL' | 'UNWATCHED' | 'IN_PROGRESS' | 'WATCHED' | 'REWATCH';
+  activeProviderFilter?: StreamingProviderName | 'ALL';
   searchQuery: string;
   watchOrderRoute: 'A_MCU' | 'B_DOOMSDAY' | 'C_MULTIVERSE';
   watchOrderSort: 'story' | 'release' | 'doomsday';

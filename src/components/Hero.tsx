@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Play, 
-  Pause,
   Plus, 
-  Check, 
   Info, 
   ChevronLeft, 
   ChevronRight, 
@@ -49,17 +47,17 @@ const SPOTLIGHT_ITEMS: SpotlightItem[] = [
   {
     id: 'avengers-doomsday',
     title: 'AVENGERS: DOOMSDAY',
-    subtitle: 'ROBERT DOWNEY JR. IS VICTOR VON DOOM',
-    logline: 'Doctor Doom rises as parallel timelines collide. Earth-616, the Fantastic Four, and the X-Men must unite before Battleworld is formed.',
-    topBadge: 'TOP 10 #1 IN MARVEL',
+    subtitle: 'ROBERT DOWNEY JR. IST VICTOR VON DOOM',
+    logline: 'Doctor Doom erhebt sich bei der Kollision paralleler Zeitlinien. Earth-616, die Fantastic Four und die X-Men müssen sich vereinen, bevor Battleworld entsteht.',
+    topBadge: '🔥 EXKLUSIVE VORSCHAU • KINO MAI 2026',
     matchScore: '99% Match',
     ageRating: '16+',
-    formatBadges: ['4K Ultra HD', 'IMAX Enhanced', 'Dolby Atmos'],
-    bannerImage: 'https://image.tmdb.org/t/p/original/bOGkgRGdhrBYJSLpXaxhXVstddV.jpg',
-    mobileImage: 'https://image.tmdb.org/t/p/w780/bOGkgRGdhrBYJSLpXaxhXVstddV.jpg',
-    trailerYoutubeId: 'G3j16f_M9jE',
+    formatBadges: ['Kino-Start: 1. Mai 2026', 'Noch nicht veröffentlicht', 'Phase 6 Event', 'Comic-Con Reveal'],
+    bannerImage: 'https://image.tmdb.org/t/p/original/s4v0UX1anfXm0UvloLsTTJ4v222.jpg',
+    mobileImage: 'https://image.tmdb.org/t/p/w780/jzPwsojjFStf5lR5Nm07w2hH56G.jpg',
+    trailerYoutubeId: 'X1aFkAkFASk',
     loreTag: 'LATVERIA & BATTLEWORLD',
-    logoUrl: 'https://image.tmdb.org/t/p/w500/6rfcehI0kmv2y8aGqKIYWENXO8y.png'
+    logoUrl: 'https://image.tmdb.org/t/p/w500/enJPk9TdYB4zCO1mIwiRYAb5yqY.png'
   },
   {
     id: 'deadpool-and-wolverine',
@@ -81,15 +79,15 @@ const SPOTLIGHT_ITEMS: SpotlightItem[] = [
     title: 'THE FANTASTIC FOUR: FIRST STEPS',
     subtitle: 'RETRO 1960s EARTH & GALACTUS',
     logline: 'Marvel’s First Family protects an alternate 1960s Earth from Galactus before cross-dimensional forces collide with Doctor Doom.',
-    topBadge: 'PHASE 6 PRELUDE',
+    topBadge: 'PHASE 6 PRELUDE • KINO JULI 2025',
     matchScore: '97% Match',
     ageRating: '12+',
-    formatBadges: ['4K Ultra HD', 'IMAX 2025'],
+    formatBadges: ['4K Ultra HD', 'IMAX 2025', 'Doomsday Prelude'],
     bannerImage: 'https://image.tmdb.org/t/p/original/8I37NtDffNV7AZlDa7uDvvqhovU.jpg',
     mobileImage: 'https://image.tmdb.org/t/p/w780/8I37NtDffNV7AZlDa7uDvvqhovU.jpg',
     trailerYoutubeId: 'pAsmrKyMqaA',
     loreTag: 'COUNCIL OF REEDS',
-    logoUrl: 'https://image.tmdb.org/t/p/w500/sst2kO7ySyAm3z5haWXUszOVWi2.png'
+    logoUrl: 'https://image.tmdb.org/t/p/w500/hpvf0d8XQ2Ty31CAKV9u8FNrZmD.png'
   },
   {
     id: 'loki-s2',
@@ -100,8 +98,8 @@ const SPOTLIGHT_ITEMS: SpotlightItem[] = [
     matchScore: '99% Match',
     ageRating: '12+',
     formatBadges: ['4K Ultra HD', 'Dolby Atmos'],
-    bannerImage: 'https://image.tmdb.org/t/p/original/5eFdM2g4H5WpI2r9Jg6bN7R8e9d.jpg',
-    mobileImage: 'https://image.tmdb.org/t/p/w780/voHUmlvjysvGyxMo2h4qRIvjhTR.jpg',
+    bannerImage: 'https://image.tmdb.org/t/p/original/84XPpjGvxNyExjSuLQe0URioioB.jpg',
+    mobileImage: 'https://image.tmdb.org/t/p/w780/oJdVHUYrjdS2IqiNztVIP4GPB1p.jpg',
     trailerYoutubeId: 'dug56u8NN7g',
     loreTag: 'TEMPORAL LORE',
     logoUrl: 'https://image.tmdb.org/t/p/w500/6yb7XUr6l7ctCwf8OJ9NN5brQ53.png'
@@ -147,41 +145,33 @@ export const Hero: React.FC<HeroProps> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto-play trailer configuration
-  const [autoPlayEnabled, setAutoPlayEnabled] = useState(true);
-  const [autoPlayDelaySeconds, setAutoPlayDelaySeconds] = useState(0);
-  const [secondsUntilPlay, setSecondsUntilPlay] = useState(0);
+  // Auto-play trailer configuration (only auto-start on desktop with smooth delay)
+  const [autoPlayEnabled, setAutoPlayEnabled] = useState(!isMobile);
+  const [autoPlayDelaySeconds, setAutoPlayDelaySeconds] = useState(2);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(true);
-  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Reset video state when active slide changes
   useEffect(() => {
     setIsVideoPlaying(false);
-    setSecondsUntilPlay(autoPlayDelaySeconds);
 
     if (countdownTimerRef.current) {
       clearInterval(countdownTimerRef.current);
     }
 
-    if (!autoPlayEnabled) return;
+    if (!autoPlayEnabled || isMobile) return;
 
-    let remaining = autoPlayDelaySeconds;
-    countdownTimerRef.current = setInterval(() => {
-      remaining -= 1;
-      setSecondsUntilPlay(remaining);
-      if (remaining <= 0) {
-        if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-        setIsVideoPlaying(true);
-      }
-    }, 1000);
+    countdownTimerRef.current = setTimeout(() => {
+      setIsVideoPlaying(true);
+    }, autoPlayDelaySeconds * 1000);
 
     return () => {
-      if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+      if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current);
     };
-  }, [activeIndex, autoPlayEnabled, autoPlayDelaySeconds]);
+  }, [activeIndex, autoPlayEnabled, autoPlayDelaySeconds, isMobile]);
 
   // Rotate spotlight slides if not playing video and not paused
   useEffect(() => {
@@ -208,11 +198,6 @@ export const Hero: React.FC<HeroProps> = ({
     setActiveIndex((prev) => (prev + 1) % shuffledItems.length);
   };
 
-  const handleToggleSound = () => {
-    playClickSound();
-    setIsAudioMuted((prev) => !prev);
-  };
-
   return (
     <section 
       id="streaming-billboard"
@@ -220,12 +205,12 @@ export const Hero: React.FC<HeroProps> = ({
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* 1. Backdrop Image Layer */}
+      {/* 1. Backdrop Images with Smooth Cross-Fade */}
       {shuffledItems.map((item, idx) => (
         <div
           key={item.id}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            idx === activeIndex && !isVideoPlaying ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            idx === activeIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
           <img referrerPolicy="no-referrer"
@@ -243,10 +228,10 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="relative w-full h-full pointer-events-none flex items-center justify-center">
             <iframe
               key={`${youtubeTrailerId}-${isAudioMuted ? 'muted' : 'unmuted'}`}
-              src={`https://www.youtube-nocookie.com/embed/${youtubeTrailerId}?autoplay=1&playsinline=1&mute=${isAudioMuted ? '1' : '0'}&controls=0&loop=1&playlist=${youtubeTrailerId}&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&enablejsapi=1`}
-              title={`${current.title} Trailer`}
-              className="w-[140vw] h-[140vh] min-w-full min-h-full object-cover pointer-events-none border-0 scale-105 sm:scale-115 transition-transform duration-1000"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              src={`https://www.youtube-nocookie.com/embed/${youtubeTrailerId}?autoplay=1&mute=${isAudioMuted ? '1' : '0'}&controls=0&modestbranding=1&loop=1&playlist=${youtubeTrailerId}&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&enablejsapi=1`}
+              title="Hero Background Trailer"
+              className="w-[140vw] h-[140vh] min-w-[100%] min-h-[100%] pointer-events-none scale-125 transition-opacity duration-1000 object-cover"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             />
           </div>
         </div>
@@ -268,24 +253,26 @@ export const Hero: React.FC<HeroProps> = ({
       {isVideoPlaying && (
         <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-30 flex items-center gap-2">
           <button
-            onClick={handleToggleSound}
+            onClick={() => setIsAudioMuted(!isAudioMuted)}
             className={`px-3 py-1.5 rounded-full border transition-all cursor-pointer shadow-lg flex items-center gap-1.5 ${
               !isAudioMuted 
                 ? 'bg-emerald-500 text-black border-emerald-400 font-bold text-xs' 
                 : 'bg-black/80 hover:bg-black text-slate-300 border-slate-700 text-xs'
             }`}
-            title={isAudioMuted ? 'Ton aktivieren' : 'Ton stummschalten'}
+            title={isAudioMuted ? "Ton anstellen" : "Stummschalten"}
           >
-            {isAudioMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-            <span className="text-[11px] font-bold uppercase">{isAudioMuted ? 'Stumm' : 'Ton An'}</span>
+            {isAudioMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-black" />}
+            <span className="hidden sm:inline font-bold uppercase tracking-wider text-[10px]">
+              {isAudioMuted ? 'Ton an' : 'Sound aktiv'}
+            </span>
           </button>
 
           <button
             onClick={() => setIsVideoPlaying(false)}
-            className="p-1.5 sm:p-2 rounded-full bg-black/80 hover:bg-slate-800 text-white border border-slate-700 transition-all cursor-pointer shadow-lg"
-            title="Video stoppen"
+            className="p-2 rounded-full bg-black/80 hover:bg-black border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shadow-lg"
+            title="Video stoppen & Bild anzeigen"
           >
-            <Pause className="w-3.5 h-3.5" />
+            <Film className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -358,6 +345,31 @@ export const Hero: React.FC<HeroProps> = ({
               <Plus className="w-4 h-4 text-white" />
               <span>Watchlist</span>
             </button>
+
+            <button
+              id="hero-doomsday-quick-toggle"
+              onClick={() => {
+                playDoomsdayAlarmSound();
+                onActivateDoomsdayEssentials();
+              }}
+              className={`px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer border ${
+                doomsdayMode 
+                  ? 'bg-emerald-500 text-black border-emerald-400 font-black shadow-[0_0_15px_rgba(16,185,129,0.5)]' 
+                  : 'bg-slate-900/90 hover:bg-slate-800 text-emerald-300 border-emerald-600/80'
+              }`}
+            >
+              <Crown className="w-4 h-4" />
+              <span>{doomsdayMode ? 'Doomsday: Aktiv' : 'Doomsday 32'}</span>
+            </button>
+
+            {/* Trailer Settings Modal Trigger */}
+            <button
+              onClick={() => setShowSettingsModal(true)}
+              className="p-2.5 rounded-lg bg-slate-900/60 hover:bg-slate-800 border border-slate-700/80 text-slate-400 hover:text-white transition-all cursor-pointer"
+              title="Trailer Auto-Play Einstellungen"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -396,6 +408,92 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Auto-Play Trailer Settings Modal */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#1A1D29] border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <Settings className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-black uppercase tracking-wider text-base text-white">
+                  Billboard Video Einstellungen
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="text-slate-400 hover:text-white text-sm font-bold cursor-pointer p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 text-sm">
+              {/* Toggle AutoPlay */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-white">Auto-Play Trailer</div>
+                  <div className="text-xs text-slate-400">Automatische Trailer-Wiedergabe im Banner</div>
+                </div>
+                <button
+                  onClick={() => setAutoPlayEnabled(!autoPlayEnabled)}
+                  className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${
+                    autoPlayEnabled ? 'bg-emerald-500' : 'bg-slate-700'
+                  }`}
+                >
+                  <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                    autoPlayEnabled ? 'translate-x-6' : 'translate-x-0'
+                  }`} />
+                </button>
+              </div>
+
+              {/* Delay Slider */}
+              {autoPlayEnabled && (
+                <div className="space-y-2 pt-2 border-t border-slate-800/80">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-white">Startverzögerung</span>
+                    <span className="font-mono text-emerald-400 font-bold">{autoPlayDelaySeconds} Sekunden</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="6"
+                    step="0.5"
+                    value={autoPlayDelaySeconds}
+                    onChange={(e) => setAutoPlayDelaySeconds(parseFloat(e.target.value))}
+                    className="w-full accent-emerald-400 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-500 font-bold">
+                    <span>1s (Sofort)</span>
+                    <span>3s (Standard)</span>
+                    <span>6s (Langsam)</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Sound default */}
+              <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
+                <div>
+                  <div className="font-bold text-white">Standardmäßig Stumm</div>
+                  <div className="text-xs text-slate-400">Audio startet ohne Ton (Browser-Vorgabe)</div>
+                </div>
+                <span className="text-xs font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-600/40">
+                  AKTIV
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-800 flex justify-end">
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase text-xs tracking-wider cursor-pointer transition-all"
+              >
+                Fertig
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

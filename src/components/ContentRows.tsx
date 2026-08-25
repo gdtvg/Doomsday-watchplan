@@ -121,15 +121,17 @@ const HorizontalRow: React.FC<HorizontalRowProps> = ({
             return (
               <div
                 key={movie.id}
-                className="relative flex items-center min-w-[210px] sm:min-w-[230px] max-w-[250px] flex-shrink-0 snap-start group/top10 pl-8 sm:pl-10"
+                className="relative flex items-end min-w-[205px] sm:min-w-[240px] max-w-[260px] flex-shrink-0 snap-start group/top10"
               >
-                {/* Large Netflix Style Rank Number */}
-                <span className="absolute left-0 bottom-6 text-6xl sm:text-7xl font-black text-transparent stroke-number select-none pointer-events-none z-0">
-                  {rank}
-                </span>
+                {/* Authentic Streaming Giant Metallic Rank Number */}
+                <div className="w-10 sm:w-14 flex-shrink-0 flex items-end justify-center select-none pointer-events-none pb-12 pr-1 -mr-2 z-0">
+                  <span className="text-6xl sm:text-8xl font-black font-bebas text-transparent bg-clip-text bg-gradient-to-b from-slate-100 via-slate-400 to-slate-700 drop-shadow-[0_8px_16px_rgba(0,0,0,0.9)] tracking-tighter leading-none group-hover/top10:from-amber-200 group-hover/top10:to-amber-500 transition-all">
+                    {rank}
+                  </span>
+                </div>
 
                 {/* Movie Card */}
-                <div className="w-full relative z-10">
+                <div className="flex-1 min-w-0 relative z-10">
                   <MovieCard
                     movie={movie}
                     userData={userData[movie.id]}

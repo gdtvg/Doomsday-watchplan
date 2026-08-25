@@ -173,6 +173,7 @@ export default function App() {
               onSelectMovie={(movie) => setSelectedMovie(movie)}
             />
 
+
             {/* Release Countdown to Avengers: Doomsday */}
             <CountdownTimer />
 

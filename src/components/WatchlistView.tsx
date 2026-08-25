@@ -236,6 +236,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
             <option value="FAVORITES">Meine Favoriten ❤️</option>
           </select>
 
+
           {/* Reset Filters */}
           {(activeUniverse !== 'ALL' || activePriority !== 'ALL' || activeFormat !== 'ALL' || activeWatchStatus !== 'ALL' || searchQuery !== '') && (
             <button

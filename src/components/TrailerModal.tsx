@@ -44,17 +44,22 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
   const [selectedMovie, setSelectedMovie] = useState<MarvelTitle | null>(movie);
   const [showSpoiler, setShowSpoiler] = useState(false);
 
+  const [activeClipIndex, setActiveClipIndex] = useState<number>(0);
+
   React.useEffect(() => {
     if (movie) {
       setSelectedMovie(movie);
       setShowSpoiler(false);
+      setActiveClipIndex(0);
     }
   }, [movie]);
 
   if (!isOpen || !selectedMovie) return null;
 
   const currentMovie = selectedMovie;
-  const youtubeId = currentMovie.trailerYoutubeId || 'qEVUtrk8_B4';
+  const hasHintClips = Boolean(currentMovie.hintClips && currentMovie.hintClips.length > 0);
+  const currentClip = hasHintClips && currentMovie.hintClips ? currentMovie.hintClips[activeClipIndex] : null;
+  const youtubeId = currentClip ? currentClip.youtubeId : (currentMovie.trailerYoutubeId || 'qEVUtrk8_B4');
 
   // Get related trailers in same universe or priority
   const relatedMovies = MARVEL_TITLES.filter(
@@ -77,31 +82,78 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
         {/* Video Player Frame with 16:9 ratio */}
         <div className="relative aspect-video w-full bg-black">
           <iframe
+            key={youtubeId}
             src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&mute=${isMuted ? '1' : '0'}&controls=1`}
-            title={currentMovie.title}
+            title={currentClip ? currentClip.title : currentMovie.title}
             className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
 
-          {/* Top Actions: Audio Toggle & Close */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+          {/* Top Actions: Audio Toggle, YouTube Direct Link & Close */}
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-2">
+            <a
+              href={`https://www.youtube.com/watch?v=${youtubeId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-full bg-black/80 hover:bg-red-600/90 text-white text-xs font-bold border border-white/20 transition-all flex items-center gap-1.5 shadow-lg hover:scale-105"
+              title="Auf YouTube ansehen"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-red-400 group-hover:text-white" />
+              <span className="hidden sm:inline">Auf YouTube</span>
+            </a>
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className="p-2.5 rounded-full bg-black/80 hover:bg-slate-800 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
-              title={isMuted ? 'Unmute' : 'Mute'}
+              className="p-2 sm:p-2.5 rounded-full bg-black/80 hover:bg-slate-800 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+              title={isMuted ? 'Ton aktivieren' : 'Stummschalten'}
             >
               {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
             </button>
             <button
               onClick={onClose}
-              className="p-2.5 rounded-full bg-black/80 hover:bg-emerald-500 text-white hover:text-black border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
-              title="Close Theater"
+              className="p-2 sm:p-2.5 rounded-full bg-black/80 hover:bg-emerald-500 text-white hover:text-black border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+              title="Schließen"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
+
+        {/* Hint Clips Selector Tabs (if available) */}
+        {hasHintClips && currentMovie.hintClips && (
+          <div className="bg-[#05080F] px-4 py-3 border-b border-slate-800/80">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-[11px] font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Offizielle Hint-Trailer, Teaser & Reveal-Clips
+              </span>
+              <span className="text-[10px] text-slate-400 font-semibold">
+                {currentMovie.hintClips.length} Clips verfügbar
+              </span>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {currentMovie.hintClips.map((clip, idx) => (
+                <button
+                  key={clip.youtubeId + idx}
+                  onClick={() => setActiveClipIndex(idx)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer border ${
+                    activeClipIndex === idx
+                      ? 'bg-emerald-500 text-black border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                      : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border-slate-700'
+                  }`}
+                >
+                  <Play className="w-3 h-3 fill-current" />
+                  <span>{clip.tag || clip.title}</span>
+                </button>
+              ))}
+            </div>
+            {currentClip && (
+              <p className="text-[11px] text-slate-300 mt-2 font-normal">
+                <strong className="text-white">{currentClip.title}:</strong> {currentClip.description}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Streaming Info & Details Bar */}
         <div className="p-4 sm:p-6 space-y-5 bg-gradient-to-b from-[#070B14] via-[#05080E] to-[#030509]">
@@ -110,6 +162,11 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
+                {currentMovie.isUpcoming && (
+                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-600 animate-pulse">
+                    NOCH NICHT VERÖFFENTLICHT • KINO
+                  </span>
+                )}
                 <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
                   {currentMovie.universe}
                 </span>
@@ -121,9 +178,6 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
                 </span>
                 <span className="text-[10px] font-bold text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800/60">
                   IMAX ENHANCED
-                </span>
-                <span className="text-[10px] font-bold text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                  DOLBY ATMOS
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight uppercase">

@@ -6,12 +6,15 @@ import {
   UserTitleData, 
   UniverseType, 
   PriorityLevel, 
-  MediaType 
+  MediaType,
+  WatchStatus,
+  StreamingProviderName
 } from '../types';
 
 export interface WatchlistStats {
   totalTitles: number;
   watchedTitles: number;
+  inProgressTitles: number;
   remainingTitles: number;
   totalHours: number;
   watchedHours: number;
@@ -25,6 +28,7 @@ export interface WatchlistStats {
   seriesWatchedCount: number;
   averageRating: number;
   favoriteTitles: MarvelTitle[];
+  inProgressList: MarvelTitle[];
   universeStats: Record<string, { total: number; watched: number; hours: number; watchedHours: number; percentage: number }>;
 }
 
@@ -39,7 +43,6 @@ export function useWatchlist() {
     } catch (e) {
       console.error('Error loading watchlist from localStorage', e);
     }
-    // Default initial state: mark foundational classics as watched if user desires or start clean
     return {};
   });
 
@@ -56,7 +59,8 @@ export function useWatchlist() {
   const [activeUniverse, setActiveUniverse] = useState<UniverseType | 'ALL'>('ALL');
   const [activePriority, setActivePriority] = useState<PriorityLevel | 'ALL'>('ALL');
   const [activeFormat, setActiveFormat] = useState<MediaType | 'ALL'>('ALL');
-  const [activeWatchStatus, setActiveWatchStatus] = useState<'ALL' | 'UNWATCHED' | 'WATCHED'>('ALL');
+  const [activeWatchStatus, setActiveWatchStatus] = useState<'ALL' | 'UNWATCHED' | 'IN_PROGRESS' | 'WATCHED' | 'REWATCH'>('ALL');
+  const [activeProviderFilter, setActiveProviderFilter] = useState<StreamingProviderName | 'ALL'>('ALL');
 
   // Watch Order View state
   const [watchOrderRoute, setWatchOrderRoute] = useState<'A_MCU' | 'B_DOOMSDAY' | 'C_MULTIVERSE'>('B_DOOMSDAY');
@@ -103,14 +107,33 @@ export function useWatchlist() {
     setUserData(prev => {
       const current = prev[id] || { watched: false };
       const nextWatched = !current.watched;
+      const nextStatus: WatchStatus = nextWatched ? 'WATCHED' : 'UNWATCHED';
       return {
         ...prev,
         [id]: {
           ...current,
           watched: nextWatched,
+          watchStatus: nextStatus,
           watchedAt: nextWatched ? new Date().toISOString() : undefined,
-          // automatically mark post credit watched when whole movie is marked
           watchedPostCredit: nextWatched ? true : current.watchedPostCredit
+        }
+      };
+    });
+  };
+
+  const setWatchStatus = (id: string, status: WatchStatus, progressMinutes?: number) => {
+    setUserData(prev => {
+      const current = prev[id] || { watched: false };
+      const isWatched = status === 'WATCHED' || status === 'REWATCH';
+      return {
+        ...prev,
+        [id]: {
+          ...current,
+          watched: isWatched,
+          watchStatus: status,
+          progressMinutes: progressMinutes !== undefined ? progressMinutes : current.progressMinutes,
+          watchedAt: isWatched ? (current.watchedAt || new Date().toISOString()) : undefined,
+          watchedPostCredit: isWatched ? (current.watchedPostCredit ?? true) : current.watchedPostCredit
         }
       };
     });
@@ -175,6 +198,7 @@ export function useWatchlist() {
         updated[id] = {
           ...(updated[id] || {}),
           watched: true,
+          watchStatus: 'WATCHED',
           watchedPostCredit: true,
           watchedAt: new Date().toISOString()
         };
@@ -215,7 +239,9 @@ export function useWatchlist() {
   // --- Filtered Titles List ---
   const filteredTitles = useMemo(() => {
     return MARVEL_TITLES.filter(item => {
-      const isWatched = !!userData[item.id]?.watched;
+      const uData = userData[item.id];
+      const isWatched = !!uData?.watched;
+      const status: WatchStatus = uData?.watchStatus || (isWatched ? 'WATCHED' : 'UNWATCHED');
 
       // Doomsday mode filter: show only ESSENTIAL & HIGHLY_RELEVANT
       if (doomsdayMode) {
@@ -239,9 +265,18 @@ export function useWatchlist() {
         return false;
       }
 
+      // Streaming Provider Filter
+      if (activeProviderFilter !== 'ALL') {
+        const hasProvider = (item.streaming?.stream && item.streaming.stream.includes(activeProviderFilter)) ||
+          item.streamingPlatform === activeProviderFilter;
+        if (!hasProvider) return false;
+      }
+
       // Watch Status Filter
-      if (activeWatchStatus === 'WATCHED' && !isWatched) return false;
-      if (activeWatchStatus === 'UNWATCHED' && isWatched) return false;
+      if (activeWatchStatus === 'WATCHED' && status !== 'WATCHED') return false;
+      if (activeWatchStatus === 'UNWATCHED' && status !== 'UNWATCHED') return false;
+      if (activeWatchStatus === 'IN_PROGRESS' && status !== 'IN_PROGRESS') return false;
+      if (activeWatchStatus === 'REWATCH' && status !== 'REWATCH') return false;
 
       // Search Query Filter
       if (searchQuery.trim()) {
@@ -269,6 +304,7 @@ export function useWatchlist() {
     activePriority,
     activeFormat,
     activeWatchStatus,
+    activeProviderFilter,
     searchQuery,
     userData
   ]);
@@ -276,6 +312,7 @@ export function useWatchlist() {
   // --- Deep Statistics ---
   const stats: WatchlistStats = useMemo(() => {
     let watchedCount = 0;
+    let inProgressCount = 0;
     let totalMinutes = 0;
     let watchedMinutes = 0;
     let essentialCount = 0;
@@ -285,6 +322,7 @@ export function useWatchlist() {
     let totalRatingSum = 0;
     let ratingCount = 0;
     const favorites: MarvelTitle[] = [];
+    const inProgressList: MarvelTitle[] = [];
 
     const universeMap: Record<string, { total: number; watched: number; minutes: number; watchedMinutes: number }> = {
       MCU: { total: 0, watched: 0, minutes: 0, watchedMinutes: 0 },
@@ -298,6 +336,7 @@ export function useWatchlist() {
     MARVEL_TITLES.forEach(title => {
       const uData = userData[title.id];
       const isWatched = !!uData?.watched;
+      const status: WatchStatus = uData?.watchStatus || (isWatched ? 'WATCHED' : 'UNWATCHED');
 
       totalMinutes += title.runtimeMinutes;
       if (isWatched) {
@@ -305,6 +344,13 @@ export function useWatchlist() {
         watchedMinutes += title.runtimeMinutes;
         if (title.type === 'FILM') moviesWatched++;
         if (title.type === 'SERIES') seriesWatched++;
+      } else if (status === 'IN_PROGRESS') {
+        inProgressCount++;
+        inProgressList.push(title);
+        // credit fractional minutes if recorded
+        if (uData?.progressMinutes) {
+          watchedMinutes += Math.min(title.runtimeMinutes, uData.progressMinutes);
+        }
       }
 
       if (title.priority === 'ESSENTIAL') {
@@ -355,7 +401,7 @@ export function useWatchlist() {
     });
 
     const totalTitles = MARVEL_TITLES.length;
-    const remainingTitles = totalTitles - watchedCount;
+    const remainingTitles = Math.max(0, totalTitles - watchedCount);
     const totalHours = Math.round(totalMinutes / 60);
     const watchedHours = Math.round(watchedMinutes / 60);
     const remainingHours = Math.max(0, totalHours - watchedHours);
@@ -368,6 +414,7 @@ export function useWatchlist() {
     return {
       totalTitles,
       watchedTitles: watchedCount,
+      inProgressTitles: inProgressCount,
       remainingTitles,
       totalHours,
       watchedHours,
@@ -381,6 +428,7 @@ export function useWatchlist() {
       seriesWatchedCount: seriesWatched,
       averageRating,
       favoriteTitles: favorites,
+      inProgressList,
       universeStats,
     };
   }, [userData]);
@@ -404,6 +452,8 @@ export function useWatchlist() {
     setActiveFormat,
     activeWatchStatus,
     setActiveWatchStatus,
+    activeProviderFilter,
+    setActiveProviderFilter,
     watchOrderRoute,
     setWatchOrderRoute,
     watchOrderSort,
@@ -413,6 +463,7 @@ export function useWatchlist() {
     plannerTargetDate,
     setPlannerTargetDate,
     toggleWatched,
+    setWatchStatus,
     togglePostCredit,
     setRating,
     toggleFavorite,

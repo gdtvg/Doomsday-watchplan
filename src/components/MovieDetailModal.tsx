@@ -61,13 +61,6 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
   onOpenTrailer,
   onSelectMovie
 }) => {
-  if (!movie) return null;
-
-  const isWatched = !!userData?.watched;
-  const isPostCreditWatched = !!userData?.watchedPostCredit;
-  const userRating = userData?.userRating || 0;
-  const isFavorite = !!userData?.isFavorite;
-
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [showLocalSpoiler, setShowLocalSpoiler] = useState(globalSpoilerUnlocked);
   const [copyToast, setCopyToast] = useState(false);
@@ -77,6 +70,13 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
     setActiveTab('overview');
     setShowLocalSpoiler(globalSpoilerUnlocked);
   }, [movie?.id, globalSpoilerUnlocked]);
+
+  if (!movie) return null;
+
+  const isWatched = !!userData?.watched;
+  const isPostCreditWatched = !!userData?.watchedPostCredit;
+  const userRating = userData?.userRating || 0;
+  const isFavorite = !!userData?.isFavorite;
 
   const priorityMeta = PRIORITY_CONFIG[movie.priority] || PRIORITY_CONFIG.RELEVANT;
   const factMeta = FACT_STATUS_CONFIG[movie.factStatus] || FACT_STATUS_CONFIG.CONFIRMED;
@@ -105,7 +105,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
 
   const scoreDisplay = movie.ratingScore || (movie.priority === 'ESSENTIAL' ? 8.4 : 7.8);
   
-  const isUpcoming = movie.id === 'captain-america-brave-new-world' || movie.id === 'thunderbolts-asterisk' || movie.id === 'fantastic-four-first-steps' || movie.id === 'avengers-doomsday' || movie.id === 'avengers-secret-wars' || movie.id === 'blade' || movie.id === 'spider-man-4' || (movie.releaseDate ? new Date(movie.releaseDate).getTime() > Date.now() : false);
+  const isUpcoming = Boolean(movie.isUpcoming || (movie.releaseDate ? new Date(movie.releaseDate).getTime() > Date.now() : false));
 
   return (
     <div 
@@ -218,7 +218,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
                   className="w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider text-black bg-white hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.7)] hover:scale-102 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-black ml-0.5" />
-                  <span>{isUpcoming ? 'Leaked / Concept Trailer' : 'Play Trailer'}</span>
+                  <span>{movie.hintClips ? 'Hint-Trailer & Teaser' : (isUpcoming ? 'Teaser & Reveal ansehen' : 'Trailer ansehen')}</span>
                 </button>
               )}
 
