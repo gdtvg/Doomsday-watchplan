@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { MARVEL_TITLES } from '../data/movies';
 import { APP_CONFIG, DOOMSDAY_RELEASE_DATE } from '../data/config';
 import { 
@@ -6,10 +6,20 @@ import {
   UserTitleData, 
   UniverseType, 
   PriorityLevel, 
-  MediaType,
-  WatchStatus,
-  StreamingProviderName
+  MediaType, 
+  WatchStatus, 
+  StreamingProviderName 
 } from '../types';
+import { db, auth, handleFirestoreError, OperationType } from '../lib/firebase';
+import { 
+  doc, 
+  setDoc, 
+  collection, 
+  onSnapshot, 
+  serverTimestamp, 
+  writeBatch 
+} from 'firebase/firestore';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 export interface WatchlistStats {
   totalTitles: number;
@@ -32,7 +42,12 @@ export interface WatchlistStats {
   universeStats: Record<string, { total: number; watched: number; hours: number; watchedHours: number; percentage: number }>;
 }
 
+export type CloudSyncStatus = 'synced' | 'syncing' | 'offline' | 'local';
+
 export function useWatchlist() {
+  const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
+  const [syncStatus, setSyncStatus] = useState<CloudSyncStatus>('local');
+
   // --- Persistent User Data ---
   const [userData, setUserData] = useState<Record<string, UserTitleData>>(() => {
     try {
@@ -77,7 +92,18 @@ export function useWatchlist() {
     return saved || DOOMSDAY_RELEASE_DATE.split('T')[0];
   });
 
-  // Save changes to localStorage
+  // Auth State Listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (!user) {
+        setSyncStatus('local');
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Save changes to localStorage as offline mirror
   useEffect(() => {
     try {
       localStorage.setItem(APP_CONFIG.storageKey, JSON.stringify(userData));
@@ -102,21 +128,150 @@ export function useWatchlist() {
     localStorage.setItem('marvel_planner_target', plannerTargetDate);
   }, [plannerTargetDate]);
 
+  // Firestore Real-Time Listener when User is Authenticated
+  useEffect(() => {
+    if (!currentUser) return;
+
+    setSyncStatus('syncing');
+    const watchlistPath = `users/${currentUser.uid}/watchlist`;
+    const watchlistCollection = collection(db, 'users', currentUser.uid, 'watchlist');
+
+    const unsubscribeWatchlist = onSnapshot(
+      watchlistCollection,
+      (snapshot) => {
+        const cloudData: Record<string, UserTitleData> = {};
+        snapshot.forEach((docSnap) => {
+          const item = docSnap.data();
+          cloudData[docSnap.id] = {
+            watched: !!item.watched,
+            watchStatus: item.watchStatus || (item.watched ? 'WATCHED' : 'UNWATCHED'),
+            watchedAt: item.watchedAt,
+            watchedPostCredit: item.watchedPostCredit,
+            userRating: item.userRating,
+            isFavorite: item.isFavorite,
+            notes: item.notes,
+            progressMinutes: item.progressMinutes,
+          };
+        });
+
+        // Merge local data with cloud data
+        setUserData((prevLocal) => {
+          const merged = { ...prevLocal, ...cloudData };
+          return merged;
+        });
+
+        setSyncStatus('synced');
+      },
+      (error) => {
+        setSyncStatus('offline');
+        handleFirestoreError(error, OperationType.LIST, watchlistPath);
+      }
+    );
+
+    // Also listen to user preferences document
+    const userDocPath = `users/${currentUser.uid}`;
+    const userDocRef = doc(db, 'users', currentUser.uid);
+    const unsubscribeUser = onSnapshot(
+      userDocRef,
+      (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.doomsdayMode !== undefined) setDoomsdayMode(data.doomsdayMode);
+          if (data.spoilerUnlocked !== undefined) setSpoilerUnlocked(data.spoilerUnlocked);
+          if (data.plannerHoursPerWeek !== undefined) setPlannerHoursPerWeek(data.plannerHoursPerWeek);
+          if (data.plannerTargetDate) setPlannerTargetDate(data.plannerTargetDate);
+          if (data.watchOrderRoute) setWatchOrderRoute(data.watchOrderRoute);
+          if (data.watchOrderSort) setWatchOrderSort(data.watchOrderSort);
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, userDocPath);
+      }
+    );
+
+    return () => {
+      unsubscribeWatchlist();
+      unsubscribeUser();
+    };
+  }, [currentUser]);
+
+  // Cloud Write Helper
+  const syncTitleToFirestore = useCallback(async (titleId: string, itemData: UserTitleData) => {
+    if (!currentUser) return;
+
+    const path = `users/${currentUser.uid}/watchlist/${titleId}`;
+    try {
+      setSyncStatus('syncing');
+      const docRef = doc(db, 'users', currentUser.uid, 'watchlist', titleId);
+      
+      const payload: Record<string, any> = {
+        userId: currentUser.uid,
+        titleId,
+        watched: !!itemData.watched,
+        watchStatus: itemData.watchStatus || (itemData.watched ? 'WATCHED' : 'UNWATCHED'),
+        updatedAt: serverTimestamp(),
+      };
+
+      if (itemData.watchedAt !== undefined) payload.watchedAt = itemData.watchedAt;
+      if (itemData.watchedPostCredit !== undefined) payload.watchedPostCredit = itemData.watchedPostCredit;
+      if (itemData.userRating !== undefined) payload.userRating = itemData.userRating;
+      if (itemData.isFavorite !== undefined) payload.isFavorite = itemData.isFavorite;
+      if (itemData.notes !== undefined) payload.notes = itemData.notes;
+      if (itemData.progressMinutes !== undefined) payload.progressMinutes = itemData.progressMinutes;
+
+      await setDoc(docRef, payload, { merge: true });
+      setSyncStatus('synced');
+    } catch (err) {
+      setSyncStatus('offline');
+      handleFirestoreError(err, OperationType.WRITE, path);
+    }
+  }, [currentUser]);
+
+  // Sync Preferences to Firestore
+  const syncPreferencesToFirestore = useCallback(async (prefs: {
+    doomsdayMode?: boolean;
+    spoilerUnlocked?: boolean;
+    plannerHoursPerWeek?: number;
+    plannerTargetDate?: string;
+    watchOrderRoute?: 'A_MCU' | 'B_DOOMSDAY' | 'C_MULTIVERSE';
+    watchOrderSort?: 'story' | 'release' | 'doomsday';
+  }) => {
+    if (!currentUser) return;
+    const path = `users/${currentUser.uid}`;
+    try {
+      setSyncStatus('syncing');
+      const userRef = doc(db, 'users', currentUser.uid);
+      await setDoc(userRef, {
+        userId: currentUser.uid,
+        ...prefs,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+      setSyncStatus('synced');
+    } catch (err) {
+      setSyncStatus('offline');
+      handleFirestoreError(err, OperationType.WRITE, path);
+    }
+  }, [currentUser]);
+
   // --- Handlers ---
   const toggleWatched = (id: string) => {
     setUserData(prev => {
       const current = prev[id] || { watched: false };
       const nextWatched = !current.watched;
       const nextStatus: WatchStatus = nextWatched ? 'WATCHED' : 'UNWATCHED';
+      const updatedItem: UserTitleData = {
+        ...current,
+        watched: nextWatched,
+        watchStatus: nextStatus,
+        watchedAt: nextWatched ? new Date().toISOString() : undefined,
+        watchedPostCredit: nextWatched ? true : current.watchedPostCredit
+      };
+      
+      syncTitleToFirestore(id, updatedItem);
+
       return {
         ...prev,
-        [id]: {
-          ...current,
-          watched: nextWatched,
-          watchStatus: nextStatus,
-          watchedAt: nextWatched ? new Date().toISOString() : undefined,
-          watchedPostCredit: nextWatched ? true : current.watchedPostCredit
-        }
+        [id]: updatedItem
       };
     });
   };
@@ -125,16 +280,20 @@ export function useWatchlist() {
     setUserData(prev => {
       const current = prev[id] || { watched: false };
       const isWatched = status === 'WATCHED' || status === 'REWATCH';
+      const updatedItem: UserTitleData = {
+        ...current,
+        watched: isWatched,
+        watchStatus: status,
+        progressMinutes: progressMinutes !== undefined ? progressMinutes : current.progressMinutes,
+        watchedAt: isWatched ? (current.watchedAt || new Date().toISOString()) : undefined,
+        watchedPostCredit: isWatched ? (current.watchedPostCredit ?? true) : current.watchedPostCredit
+      };
+
+      syncTitleToFirestore(id, updatedItem);
+
       return {
         ...prev,
-        [id]: {
-          ...current,
-          watched: isWatched,
-          watchStatus: status,
-          progressMinutes: progressMinutes !== undefined ? progressMinutes : current.progressMinutes,
-          watchedAt: isWatched ? (current.watchedAt || new Date().toISOString()) : undefined,
-          watchedPostCredit: isWatched ? (current.watchedPostCredit ?? true) : current.watchedPostCredit
-        }
+        [id]: updatedItem
       };
     });
   };
@@ -142,12 +301,16 @@ export function useWatchlist() {
   const togglePostCredit = (id: string) => {
     setUserData(prev => {
       const current = prev[id] || { watched: false };
+      const updatedItem: UserTitleData = {
+        ...current,
+        watchedPostCredit: !current.watchedPostCredit
+      };
+
+      syncTitleToFirestore(id, updatedItem);
+
       return {
         ...prev,
-        [id]: {
-          ...current,
-          watchedPostCredit: !current.watchedPostCredit
-        }
+        [id]: updatedItem
       };
     });
   };
@@ -155,12 +318,16 @@ export function useWatchlist() {
   const setRating = (id: string, rating: number) => {
     setUserData(prev => {
       const current = prev[id] || { watched: false };
+      const updatedItem: UserTitleData = {
+        ...current,
+        userRating: rating
+      };
+
+      syncTitleToFirestore(id, updatedItem);
+
       return {
         ...prev,
-        [id]: {
-          ...current,
-          userRating: rating
-        }
+        [id]: updatedItem
       };
     });
   };
@@ -168,12 +335,16 @@ export function useWatchlist() {
   const toggleFavorite = (id: string) => {
     setUserData(prev => {
       const current = prev[id] || { watched: false };
+      const updatedItem: UserTitleData = {
+        ...current,
+        isFavorite: !current.isFavorite
+      };
+
+      syncTitleToFirestore(id, updatedItem);
+
       return {
         ...prev,
-        [id]: {
-          ...current,
-          isFavorite: !current.isFavorite
-        }
+        [id]: updatedItem
       };
     });
   };
@@ -181,17 +352,21 @@ export function useWatchlist() {
   const setNotes = (id: string, notes: string) => {
     setUserData(prev => {
       const current = prev[id] || { watched: false };
+      const updatedItem: UserTitleData = {
+        ...current,
+        notes
+      };
+
+      syncTitleToFirestore(id, updatedItem);
+
       return {
         ...prev,
-        [id]: {
-          ...current,
-          notes
-        }
+        [id]: updatedItem
       };
     });
   };
 
-  const markAllAsWatched = (ids: string[]) => {
+  const markAllAsWatched = async (ids: string[]) => {
     setUserData(prev => {
       const updated = { ...prev };
       ids.forEach(id => {
@@ -205,10 +380,81 @@ export function useWatchlist() {
       });
       return updated;
     });
+
+    if (currentUser) {
+      const path = `users/${currentUser.uid}/watchlist`;
+      try {
+        setSyncStatus('syncing');
+        const batch = writeBatch(db);
+        ids.forEach(id => {
+          const docRef = doc(db, 'users', currentUser.uid, 'watchlist', id);
+          batch.set(docRef, {
+            userId: currentUser.uid,
+            titleId: id,
+            watched: true,
+            watchStatus: 'WATCHED',
+            watchedPostCredit: true,
+            watchedAt: new Date().toISOString(),
+            updatedAt: serverTimestamp(),
+          }, { merge: true });
+        });
+        await batch.commit();
+        setSyncStatus('synced');
+      } catch (err) {
+        setSyncStatus('offline');
+        handleFirestoreError(err, OperationType.WRITE, path);
+      }
+    }
   };
 
-  const resetAllProgress = () => {
+  const resetAllProgress = async () => {
     setUserData({});
+    if (currentUser) {
+      const path = `users/${currentUser.uid}/watchlist`;
+      try {
+        setSyncStatus('syncing');
+        const batch = writeBatch(db);
+        Object.keys(userData).forEach(id => {
+          const docRef = doc(db, 'users', currentUser.uid, 'watchlist', id);
+          batch.delete(docRef);
+        });
+        await batch.commit();
+        setSyncStatus('synced');
+      } catch (err) {
+        setSyncStatus('offline');
+        handleFirestoreError(err, OperationType.DELETE, path);
+      }
+    }
+  };
+
+  const handleSetDoomsdayMode = (val: boolean) => {
+    setDoomsdayMode(val);
+    syncPreferencesToFirestore({ doomsdayMode: val });
+  };
+
+  const handleSetSpoilerUnlocked = (val: boolean) => {
+    setSpoilerUnlocked(val);
+    syncPreferencesToFirestore({ spoilerUnlocked: val });
+  };
+
+  const handleSetPlannerHoursPerWeek = (val: number) => {
+    setPlannerHoursPerWeek(val);
+    syncPreferencesToFirestore({ plannerHoursPerWeek: val });
+  };
+
+  const handleSetPlannerTargetDate = (val: string) => {
+    setPlannerTargetDate(val);
+    syncPreferencesToFirestore({ plannerTargetDate: val });
+  };
+
+  const handleSetWatchOrderRoute = (val: 'A_MCU' | 'B_DOOMSDAY' | 'C_MULTIVERSE') => {
+    setWatchOrderRoute(val);
+    syncPreferencesToFirestore({ watchOrderRoute: val });
+  };
+
+  const handleSetWatchOrderSort = (val: 'story' | 'release' | 'doomsday') => {
+    setWatchOrderSort(val);
+    syncPreferencesToFirestore({ watchOrderSort: val });
   };
 
   const exportDataJSON = () => {
@@ -227,6 +473,27 @@ export function useWatchlist() {
       const parsed = JSON.parse(jsonString);
       if (typeof parsed === 'object' && parsed !== null) {
         setUserData(parsed);
+        if (currentUser) {
+          // Sync all imported items to Firestore
+          const batch = writeBatch(db);
+          Object.entries(parsed).forEach(([id, data]: [string, any]) => {
+            const docRef = doc(db, 'users', currentUser.uid, 'watchlist', id);
+            batch.set(docRef, {
+              userId: currentUser.uid,
+              titleId: id,
+              watched: !!data.watched,
+              watchStatus: data.watchStatus || (data.watched ? 'WATCHED' : 'UNWATCHED'),
+              watchedAt: data.watchedAt || null,
+              watchedPostCredit: !!data.watchedPostCredit,
+              userRating: data.userRating || null,
+              isFavorite: !!data.isFavorite,
+              notes: data.notes || '',
+              progressMinutes: data.progressMinutes || 0,
+              updatedAt: serverTimestamp(),
+            }, { merge: true });
+          });
+          batch.commit().catch(e => console.error('Cloud batch import error', e));
+        }
         return true;
       }
       return false;
@@ -347,7 +614,6 @@ export function useWatchlist() {
       } else if (status === 'IN_PROGRESS') {
         inProgressCount++;
         inProgressList.push(title);
-        // credit fractional minutes if recorded
         if (uData?.progressMinutes) {
           watchedMinutes += Math.min(title.runtimeMinutes, uData.progressMinutes);
         }
@@ -434,14 +700,16 @@ export function useWatchlist() {
   }, [userData]);
 
   return {
+    currentUser,
+    syncStatus,
     userData,
     stats,
     filteredTitles,
     allTitles: MARVEL_TITLES,
     doomsdayMode,
-    setDoomsdayMode,
+    setDoomsdayMode: handleSetDoomsdayMode,
     spoilerUnlocked,
-    setSpoilerUnlocked,
+    setSpoilerUnlocked: handleSetSpoilerUnlocked,
     searchQuery,
     setSearchQuery,
     activeUniverse,
@@ -455,13 +723,13 @@ export function useWatchlist() {
     activeProviderFilter,
     setActiveProviderFilter,
     watchOrderRoute,
-    setWatchOrderRoute,
+    setWatchOrderRoute: handleSetWatchOrderRoute,
     watchOrderSort,
-    setWatchOrderSort,
+    setWatchOrderSort: handleSetWatchOrderSort,
     plannerHoursPerWeek,
-    setPlannerHoursPerWeek,
+    setPlannerHoursPerWeek: handleSetPlannerHoursPerWeek,
     plannerTargetDate,
-    setPlannerTargetDate,
+    setPlannerTargetDate: handleSetPlannerTargetDate,
     toggleWatched,
     setWatchStatus,
     togglePostCredit,

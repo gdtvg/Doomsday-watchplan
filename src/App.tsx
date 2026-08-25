@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useWatchlist } from './hooks/useWatchlist';
+import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { BrandHubs } from './components/BrandHubs';
@@ -17,6 +18,7 @@ import { MovieDetailModal } from './components/MovieDetailModal';
 import { TrailerModal } from './components/TrailerModal';
 import { AboutModal } from './components/AboutModal';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
+import { UserProfileModal } from './components/UserProfileModal';
 import { DoomsdayTierListView } from './components/DoomsdayTierListView';
 import { MultiverseIncursionRadar } from './components/MultiverseIncursionRadar';
 import { Footer } from './components/Footer';
@@ -24,14 +26,17 @@ import { MarvelTitle, UniverseType } from './types';
 import { playClickSound, playWatchedChime } from './utils/soundEffects';
 import { findMovieByInfoQuery } from './data/movies';
 
-export default function App() {
+function MainApp() {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [selectedMovie, setSelectedMovie] = useState<MarvelTitle | null>(null);
   const [selectedTrailerMovie, setSelectedTrailerMovie] = useState<MarvelTitle | null>(null);
   const [isAboutOpen, setIsAboutOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
 
   const {
+    currentUser,
+    syncStatus,
     userData,
     stats,
     filteredTitles,
@@ -58,6 +63,7 @@ export default function App() {
     plannerTargetDate,
     setPlannerTargetDate,
     toggleWatched,
+    setWatchStatus,
     togglePostCredit,
     setRating,
     toggleFavorite,
@@ -147,6 +153,8 @@ export default function App() {
         completionPercentage={stats.completionPercentage}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
+        syncStatus={syncStatus}
+        onOpenProfile={() => setIsProfileOpen(true)}
       />
 
       {/* Doomsday Mode Active Banner */}
@@ -361,6 +369,15 @@ export default function App() {
         onClose={() => setIsAboutOpen(false)}
       />
 
+      {/* Firebase Cloud User Profile Modal */}
+      <UserProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        syncStatus={syncStatus}
+        watchedCount={stats.watchedTitles}
+        totalCount={stats.totalTitles}
+      />
+
       {/* Footer */}
       <Footer
         onNavigate={(tab) => {
@@ -371,5 +388,13 @@ export default function App() {
       />
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
   );
 }

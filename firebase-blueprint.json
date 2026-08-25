@@ -1,0 +1,144 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile, app preferences, and marathon target configurations",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name or hero alias",
+          "maxLength": 128
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "User profile avatar photo URL",
+          "maxLength": 1024
+        },
+        "doomsdayMode": {
+          "type": "boolean",
+          "description": "Flag indicating if Doomsday Essentials filter mode is active"
+        },
+        "spoilerUnlocked": {
+          "type": "boolean",
+          "description": "Flag indicating if post-credit and story spoilers are unlocked"
+        },
+        "plannerHoursPerWeek": {
+          "type": "number",
+          "description": "Weekly dedicated watch hours in the marathon planner"
+        },
+        "plannerTargetDate": {
+          "type": "string",
+          "description": "ISO date string for marathon target completion",
+          "maxLength": 32
+        },
+        "watchOrderRoute": {
+          "type": "string",
+          "description": "Selected watch order route identifier",
+          "enum": ["A_MCU", "B_DOOMSDAY", "C_MULTIVERSE"],
+          "maxLength": 32
+        },
+        "watchOrderSort": {
+          "type": "string",
+          "description": "Selected watch order sort type",
+          "enum": ["story", "release", "doomsday"],
+          "maxLength": 32
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Server timestamp of user profile creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Server timestamp of last profile update"
+        }
+      },
+      "required": ["userId", "createdAt", "updatedAt"]
+    },
+    "WatchlistItem": {
+      "title": "WatchlistItem",
+      "description": "User watch progress, rating, favorites, and personal notes for a specific Marvel title",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the user who owns this watchlist entry",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "titleId": {
+          "type": "string",
+          "description": "Unique identifier of the Marvel title (e.g. loki-s1)",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "watched": {
+          "type": "boolean",
+          "description": "Whether the user has completed watching this title"
+        },
+        "watchStatus": {
+          "type": "string",
+          "description": "Current watch status of the title",
+          "enum": ["UNWATCHED", "IN_PROGRESS", "WATCHED", "REWATCH"],
+          "maxLength": 32
+        },
+        "watchedAt": {
+          "type": "string",
+          "description": "ISO timestamp string when user marked title as watched",
+          "maxLength": 64
+        },
+        "watchedPostCredit": {
+          "type": "boolean",
+          "description": "Whether user watched/read the post-credit sequence"
+        },
+        "userRating": {
+          "type": "number",
+          "description": "User rating on a scale of 1 to 10"
+        },
+        "isFavorite": {
+          "type": "boolean",
+          "description": "Whether this title is pinned to user favorites"
+        },
+        "notes": {
+          "type": "string",
+          "description": "User personal notes, theory, or review",
+          "maxLength": 2000
+        },
+        "progressMinutes": {
+          "type": "number",
+          "description": "Watched progress in minutes for movies/series"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Server timestamp of the last update"
+        }
+      },
+      "required": ["userId", "titleId", "watched", "watchStatus", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores user configuration, preferences, and marathon timeline settings"
+    },
+    "/users/{userId}/watchlist/{titleId}": {
+      "schema": {
+        "$ref": "#/entities/WatchlistItem"
+      },
+      "description": "Stores individual title watch progress, rating, and notes per user"
+    }
+  }
+}

@@ -1,0 +1,111 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny all unmapped paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Test connection doc for initial boot validation
+    match /test/connection {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // User Profile & Preferences
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false;
+
+      function isValidUserProfile(data) {
+        return data.userId == userId &&
+          data.userId == request.auth.uid &&
+          (!('email' in data) || (data.email is string && data.email.size() <= 256)) &&
+          (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 128)) &&
+          (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 1024)) &&
+          (!('doomsdayMode' in data) || data.doomsdayMode is bool) &&
+          (!('spoilerUnlocked' in data) || data.spoilerUnlocked is bool) &&
+          (!('plannerHoursPerWeek' in data) || (data.plannerHoursPerWeek is number && data.plannerHoursPerWeek >= 0 && data.plannerHoursPerWeek <= 168)) &&
+          (!('plannerTargetDate' in data) || (data.plannerTargetDate is string && data.plannerTargetDate.size() <= 32)) &&
+          (!('watchOrderRoute' in data) || (data.watchOrderRoute in ['A_MCU', 'B_DOOMSDAY', 'C_MULTIVERSE'])) &&
+          (!('watchOrderSort' in data) || (data.watchOrderSort in ['story', 'release', 'doomsday']));
+      }
+
+      allow create: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().createdAt is timestamp &&
+        incoming().updatedAt is timestamp;
+
+      allow update: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().userId == existing().userId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt is timestamp;
+
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // User's Watchlist Subcollection
+      match /watchlist/{titleId} {
+        allow get, list: if isOwner(userId) && isValidId(userId);
+
+        function isValidWatchlistItem(data) {
+          return data.userId == userId &&
+            data.userId == request.auth.uid &&
+            data.titleId == titleId &&
+            isValidId(data.titleId) &&
+            data.watched is bool &&
+            data.watchStatus in ['UNWATCHED', 'IN_PROGRESS', 'WATCHED', 'REWATCH'] &&
+            (!('watchedAt' in data) || (data.watchedAt is string && data.watchedAt.size() <= 64)) &&
+            (!('watchedPostCredit' in data) || data.watchedPostCredit is bool) &&
+            (!('userRating' in data) || (data.userRating is number && data.userRating >= 0 && data.userRating <= 10)) &&
+            (!('isFavorite' in data) || data.isFavorite is bool) &&
+            (!('notes' in data) || (data.notes is string && data.notes.size() <= 2000)) &&
+            (!('progressMinutes' in data) || (data.progressMinutes is number && data.progressMinutes >= 0 && data.progressMinutes <= 10000));
+        }
+
+        allow create: if isOwner(userId) &&
+          isValidId(userId) &&
+          isValidId(titleId) &&
+          isValidWatchlistItem(incoming()) &&
+          incoming().updatedAt is timestamp;
+
+        allow update: if isOwner(userId) &&
+          isValidId(userId) &&
+          isValidId(titleId) &&
+          isValidWatchlistItem(incoming()) &&
+          incoming().userId == existing().userId &&
+          incoming().titleId == existing().titleId &&
+          incoming().updatedAt is timestamp;
+
+        allow delete: if isOwner(userId) &&
+          isValidId(userId) &&
+          isValidId(titleId);
+      }
+    }
+  }
+}

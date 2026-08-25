@@ -17,10 +17,16 @@ import {
   Radio,
   Volume2,
   VolumeX,
-  LayoutGrid
+  LayoutGrid,
+  Cloud,
+  CloudCheck,
+  CloudOff,
+  Loader2
 } from 'lucide-react';
 import { useDevice } from '../hooks/useDevice';
 import { isSoundEnabled, setSoundEnabled, playClickSound, playDoomsdayAlarmSound } from '../utils/soundEffects';
+import { useAuth } from '../context/AuthContext';
+import { CloudSyncStatus } from '../hooks/useWatchlist';
 
 interface NavbarProps {
   activeTab: string;
@@ -30,6 +36,8 @@ interface NavbarProps {
   completionPercentage: number;
   onOpenAbout: () => void;
   onOpenSearch: () => void;
+  syncStatus: CloudSyncStatus;
+  onOpenProfile: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,7 +48,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   completionPercentage,
   onOpenAbout,
   onOpenSearch,
+  syncStatus,
+  onOpenProfile,
 }) => {
+  const { user } = useAuth();
   const { isMobile } = useDevice();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -180,6 +191,50 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
           </button>
 
+          {/* Firebase Cloud Profile & Sync Status */}
+          <button
+            id="navbar-profile-btn"
+            onClick={() => {
+              playClickSound();
+              onOpenProfile();
+            }}
+            className="relative flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/90 cursor-pointer transition-all hover:scale-105 group"
+            title={user ? `${user.displayName || 'Profil'} (Firebase Cloud aktiv)` : 'Firebase Cloud Sync aktivieren'}
+          >
+            {user?.photoURL ? (
+              <img 
+                src={user.photoURL} 
+                alt="User" 
+                className="w-5 h-5 sm:w-6 sm:h-6 rounded-md object-cover border border-emerald-500/80" 
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center text-xs font-black ${
+                user ? 'bg-emerald-500 text-black' : 'bg-slate-800 text-slate-300'
+              }`}>
+                {user ? (user.displayName?.charAt(0).toUpperCase() || 'U') : <Cloud className="w-3.5 h-3.5" />}
+              </div>
+            )}
+            
+            <span className="text-xs font-bold text-slate-200 hidden lg:inline max-w-[90px] truncate">
+              {user ? (user.displayName?.split(' ')[0] || 'Konto') : 'Cloud Sync'}
+            </span>
+
+            {/* Live Sync Status Indicator Dot / Icon */}
+            <span className="relative flex h-2 w-2">
+              {syncStatus === 'syncing' ? (
+                <Loader2 className="w-2 h-2 animate-spin text-emerald-400" />
+              ) : syncStatus === 'synced' ? (
+                <>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.9)]"></span>
+                </>
+              ) : (
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
+              )}
+            </span>
+          </button>
+
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -192,7 +247,31 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#070C14] border-b border-slate-800 px-4 py-3 space-y-1.5 animate-in slide-in-from-top-2">
+        <div className="md:hidden bg-[#070C14] border-b border-slate-800 px-4 py-3 space-y-2 animate-in slide-in-from-top-2">
+          {/* Quick Profile / Login Bar */}
+          <button
+            onClick={() => {
+              playClickSound();
+              setMobileMenuOpen(false);
+              onOpenProfile();
+            }}
+            className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700/80 flex items-center justify-between text-xs font-bold text-slate-200 cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5">
+              {user?.photoURL ? (
+                <img src={user.photoURL} alt="Avatar" className="w-6 h-6 rounded-md object-cover border border-emerald-500" referrerPolicy="no-referrer" />
+              ) : (
+                <div className="w-6 h-6 rounded-md bg-emerald-500 text-black flex items-center justify-center font-black text-xs">
+                  {user ? (user.displayName?.charAt(0).toUpperCase() || 'U') : <User className="w-3.5 h-3.5" />}
+                </div>
+              )}
+              <span>{user ? user.displayName || 'Mein Profil' : 'Anmelden / Registrieren'}</span>
+            </div>
+            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/40">
+              {user ? 'Online' : 'Login'}
+            </span>
+          </button>
+
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -254,6 +333,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Route className="w-4 h-4" />
           </div>
           <span>Timeline</span>
+        </button>
+
+        <button
+          onClick={() => {
+            playClickSound();
+            onOpenProfile();
+          }}
+          className="flex flex-col items-center justify-center min-w-[50px] min-h-[44px] gap-0.5 text-[10px] font-black uppercase transition-all cursor-pointer text-slate-400 hover:text-slate-200"
+        >
+          <div className="p-1 rounded-md bg-slate-900 border border-slate-800">
+            <User className="w-4 h-4 text-emerald-400" />
+          </div>
+          <span>{user ? 'Konto' : 'Login'}</span>
         </button>
       </nav>
     </header>

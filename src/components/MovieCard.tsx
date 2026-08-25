@@ -7,10 +7,10 @@ import {
   Tv, 
   Star, 
   Heart, 
-  Play,
-  CheckCircle2,
-  Clock,
-  Info
+  Play, 
+  CheckCircle2, 
+  Clock, 
+  Info 
 } from 'lucide-react';
 import { playClickSound, playWatchedChime } from '../utils/soundEffects';
 
@@ -42,46 +42,35 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   const isFavorite = !!userData?.isFavorite;
   const watchStatus: WatchStatus = userData?.watchStatus || (isWatched ? 'WATCHED' : 'UNWATCHED');
 
-  const getUniverseBadge = (universe: string) => {
-    switch (universe) {
-      case 'MCU': return 'bg-rose-950/90 text-rose-300 border-rose-700/80';
-      case 'X-MEN': return 'bg-amber-950/90 text-amber-300 border-amber-600/80';
-      case 'SPIDER-MAN': return 'bg-indigo-950/90 text-indigo-300 border-indigo-600/80';
-      case 'FANTASTIC FOUR': return 'bg-sky-950/90 text-sky-300 border-sky-600/80';
-      case 'MULTIVERSE': return 'bg-purple-950/90 text-purple-300 border-purple-600/80';
-      default: return 'bg-slate-900 text-slate-300 border-slate-700';
-    }
-  };
-
   const getProviderBadge = () => {
     if (movie.isUpcoming || movie.year >= 2026 || movie.id === 'avengers-doomsday') {
       return {
         label: 'KINO 2026',
-        bg: 'bg-emerald-950/90 text-emerald-300 border-emerald-600/80'
+        bg: 'bg-emerald-950/90 text-emerald-300 border-emerald-600/70'
       };
     }
     if (movie.id === 'fantastic-four-first-steps') {
       return {
         label: 'KINO 2025',
-        bg: 'bg-sky-950/90 text-sky-300 border-sky-600/80'
+        bg: 'bg-sky-950/90 text-sky-300 border-sky-600/70'
       };
     }
     const primary = movie.streaming?.stream?.[0] || movie.streamingPlatform || 'Disney+';
     if (primary.includes('Netflix')) {
       return {
         label: 'NETFLIX',
-        bg: 'bg-red-950/90 text-red-300 border-red-700/80'
+        bg: 'bg-red-950/90 text-red-300 border-red-700/70'
       };
     }
     if (primary.includes('Prime')) {
       return {
         label: 'PRIME',
-        bg: 'bg-cyan-950/90 text-cyan-300 border-cyan-700/80'
+        bg: 'bg-cyan-950/90 text-cyan-300 border-cyan-700/70'
       };
     }
     return {
       label: 'DISNEY+',
-      bg: 'bg-blue-950/90 text-blue-300 border-blue-600/80'
+      bg: 'bg-blue-950/90 text-blue-300 border-blue-600/70'
     };
   };
 
@@ -92,15 +81,15 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   return (
     <div
       id={`movie-card-${movie.id}`}
-      className={`group relative flex flex-col justify-between rounded-xl bg-gradient-to-b from-slate-900/90 to-[#080d14] border transition-all duration-300 overflow-hidden shadow-lg select-none ${
+      className={`group relative flex flex-col justify-between rounded-xl bg-gradient-to-b from-[#0e1420] to-[#06090e] border transition-all duration-300 overflow-hidden shadow-lg select-none ${
         isWatched 
-          ? 'border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/20' 
-          : 'border-slate-800/80 hover:border-emerald-500/60 hover:shadow-[0_12px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(16,185,129,0.2)] hover:-translate-y-1'
+          ? 'border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.12)] ring-1 ring-emerald-500/20' 
+          : 'border-slate-800/80 hover:border-slate-600 hover:shadow-[0_12px_28px_rgba(0,0,0,0.85)] hover:-translate-y-1'
       }`}
     >
-      {/* Cover Image Container */}
+      {/* Cover Image Container (Poster Priority 1) */}
       <div 
-        className={`relative w-full overflow-hidden bg-black cursor-pointer ${
+        className={`relative w-full overflow-hidden bg-slate-950 cursor-pointer ${
           layout === 'landscape' ? 'aspect-[16/9]' : 'aspect-[2/3]'
         }`}
         onClick={() => {
@@ -113,7 +102,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           alt={movie.title}
           loading="lazy"
           className={`w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105 ${
-            isWatched ? 'opacity-70 grayscale-[15%]' : 'opacity-95 group-hover:opacity-100'
+            isWatched ? 'opacity-70 grayscale-[20%]' : 'opacity-95 group-hover:opacity-100'
           }`}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
@@ -125,10 +114,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         />
 
         {/* Ambient Top & Bottom Vignettes */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080d14] via-transparent to-black/60 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06090e] via-transparent to-black/60 pointer-events-none" />
 
         {/* Hover Quick Actions Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60 backdrop-blur-[3px]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/65 backdrop-blur-[2px]">
           {onOpenTrailer && (
             <button
               onClick={(e) => {
@@ -136,11 +125,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                 playClickSound();
                 onOpenTrailer(movie);
               }}
-              className="px-4 py-1.5 rounded-full bg-white text-black font-black text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:bg-emerald-400 hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5"
-              title={movie.hintClips ? "Hint-Trailer & Clips" : (isUpcoming ? "Teaser & Reveal ansehen" : "Trailer abspielen")}
+              className="px-4 py-1.5 rounded-full bg-white text-black font-bold text-xs uppercase tracking-wider shadow-md hover:bg-slate-200 hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5"
+              title={movie.hintClips ? "Clips & Teaser" : (isUpcoming ? "Teaser ansehen" : "Trailer abspielen")}
             >
               <Play className="w-3.5 h-3.5 fill-black ml-0.5" />
-              <span>{movie.hintClips ? 'Hints & Teaser' : (isUpcoming ? 'Teaser' : 'Trailer')}</span>
+              <span>{movie.hintClips ? 'Hints & Clips' : (isUpcoming ? 'Teaser' : 'Trailer')}</span>
             </button>
           )}
 
@@ -150,16 +139,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               playClickSound();
               onSelectMovie(movie);
             }}
-            className="px-3.5 py-1 rounded-full bg-slate-900/95 text-slate-200 border border-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-800 hover:border-emerald-500/60 transition-all flex items-center gap-1 cursor-pointer"
+            className="px-3.5 py-1 rounded-full bg-slate-900 text-slate-200 border border-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-all flex items-center gap-1 cursor-pointer"
           >
             <Info className="w-3 h-3 text-slate-200" />
             <span>Details</span>
           </button>
         </div>
 
-        {/* Top Badges Bar */}
+        {/* Top Badges: Streaming Availability & Importance & Watch Status */}
         <div className="absolute top-2 inset-x-2 flex items-center justify-between gap-1 pointer-events-none z-10">
-          {/* Left Badges */}
+          {/* Left: Provider & Importance */}
           <div className="flex items-center gap-1 flex-shrink min-w-0">
             <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border backdrop-blur-md truncate ${provider.bg}`}>
               {provider.label}
@@ -171,7 +160,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             )}
           </div>
 
-          {/* Right Status Badge */}
+          {/* Right: Watch Status Badge */}
           <div className="flex-shrink-0">
             {isWatched ? (
               <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-950/90 border border-emerald-500/80 text-emerald-300 font-black text-[9px] tracking-wider uppercase backdrop-blur-md shadow-md">
@@ -185,25 +174,25 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               </div>
             ) : isUpcoming ? (
               <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/85 border border-amber-500/60 text-amber-400 font-black text-[9px] tracking-wider uppercase backdrop-blur-md shadow-md">
-                IN PRODUKTION
+                2026
               </div>
             ) : null}
           </div>
         </div>
 
-        {/* Bottom Specs Info */}
+        {/* Bottom Metadata Info: Type, Year, Runtime, Phase */}
         <div className="absolute bottom-2 inset-x-2 flex items-center justify-between text-[10px] font-bold text-slate-300 pointer-events-none z-10">
           <div className="flex items-center gap-1.5">
-            <span className="flex items-center gap-1 bg-black/85 px-1.5 py-0.5 rounded border border-slate-700 backdrop-blur-md">
-              {movie.type === 'SERIES' ? <Tv className="w-3 h-3 text-slate-200" /> : <Film className="w-3 h-3 text-emerald-400" />}
+            <span className="flex items-center gap-1 bg-black/80 px-1.5 py-0.5 rounded border border-slate-700 backdrop-blur-md">
+              {movie.type === 'SERIES' ? <Tv className="w-3 h-3 text-slate-300" /> : <Film className="w-3 h-3 text-emerald-400" />}
               {movie.year}
             </span>
-            <span className="bg-black/85 px-1.5 py-0.5 rounded border border-slate-700 backdrop-blur-md">
+            <span className="bg-black/80 px-1.5 py-0.5 rounded border border-slate-700 backdrop-blur-md">
               {movie.runtimeMinutes}m
             </span>
           </div>
 
-          <span className="bg-black/85 px-1.5 py-0.5 rounded border border-slate-700 text-slate-400 backdrop-blur-md">
+          <span className="bg-black/80 px-1.5 py-0.5 rounded border border-slate-700 text-slate-400 backdrop-blur-md">
             {movie.phase}
           </span>
         </div>
@@ -212,23 +201,25 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       {/* Card Info & Actions */}
       <div className="p-3 space-y-2 flex-1 flex flex-col justify-between">
         <div className="space-y-1">
+          {/* Title */}
           <h4 
             onClick={() => {
               playClickSound();
               onSelectMovie(movie);
             }}
-            className="text-xs sm:text-sm font-black text-slate-100 group-hover:text-emerald-400 transition-colors line-clamp-1 cursor-pointer tracking-tight"
+            className="text-xs sm:text-sm font-bold text-slate-100 group-hover:text-white transition-colors line-clamp-1 cursor-pointer tracking-tight"
             title={movie.title}
           >
             {movie.title}
           </h4>
 
+          {/* Context / Why it matters */}
           <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed font-normal">
             {movie.whyItMatters}
           </p>
         </div>
 
-        {/* Bottom Action Controls */}
+        {/* Action Controls */}
         <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-1.5">
           {/* Quick Mark Watched Toggle */}
           <button
@@ -237,10 +228,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               else playClickSound();
               onToggleWatched(movie.id);
             }}
-            className={`px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center gap-1 cursor-pointer ${
               isWatched
-                ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/70 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
-                : 'bg-slate-800/90 hover:bg-emerald-500 hover:text-black border border-slate-700 text-slate-200 hover:shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/70 shadow-sm'
+                : 'bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700'
             }`}
           >
             {isWatched ? <Check className="w-3 h-3 stroke-[3] text-emerald-400" /> : null}
@@ -254,10 +245,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                 playClickSound();
                 onSetRating(movie.id, userRating === 5 ? 0 : 5);
               }}
-              className="p-1 rounded hover:bg-slate-700/50 text-slate-500 hover:text-amber-400 transition-colors cursor-pointer"
+              className="p-1 rounded hover:bg-slate-800 text-slate-500 hover:text-amber-400 transition-colors cursor-pointer"
               title={`Bewertung: ${userRating}/5`}
             >
-              <Star className={`w-3.5 h-3.5 ${userRating > 0 ? 'text-amber-400 fill-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.6)]' : ''}`} />
+              <Star className={`w-3.5 h-3.5 ${userRating > 0 ? 'text-amber-400 fill-amber-400' : ''}`} />
             </button>
 
             <button
@@ -265,10 +256,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                 playClickSound();
                 onToggleFavorite(movie.id);
               }}
-              className="p-1 rounded hover:bg-slate-700/50 text-slate-500 hover:text-rose-400 transition-colors cursor-pointer"
+              className="p-1 rounded hover:bg-slate-800 text-slate-500 hover:text-rose-400 transition-colors cursor-pointer"
               title="Favorit"
             >
-              <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'text-rose-500 fill-rose-500 drop-shadow-[0_0_5px_rgba(244,63,94,0.6)]' : ''}`} />
+              <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'text-rose-500 fill-rose-500' : ''}`} />
             </button>
           </div>
         </div>
@@ -276,5 +267,6 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     </div>
   );
 };
+
 
 
