@@ -154,9 +154,9 @@ export const TMDB_ID_MAP: Record<string, string> = {
   '299536': 'avengers-infinity-war',
   '634649': 'spider-man-no-way-home',
   '453395': 'doctor-strange-multiverse-madness',
-  '1003596': 'fantastic-four-first-steps',
-  '1003598': 'avengers-doomsday',
-  '1003599': 'avengers-secret-wars',
+  '617126': 'fantastic-four-first-steps',
+  '1003596': 'avengers-doomsday',
+  '1003598': 'avengers-secret-wars',
   '1010581': 'spider-man-brand-new-day',
   '84958': 'loki-s1',
   '207559': 'loki-s2',
@@ -164,10 +164,11 @@ export const TMDB_ID_MAP: Record<string, string> = {
   '88396': 'the-falcon-winter-soldier',
   '609681': 'the-marvels',
   '640146': 'ant-man-quantumania',
-  '774752': 'guardians-galaxy-vol-3',
+  '447365': 'guardians-galaxy-vol-3',
   '970347': 'thunderbolts-asterisk',
   '822119': 'captain-america-brave-new-world',
-  '246655': 'xmen-days-of-future-past',
+  '127585': 'xmen-days-of-future-past',
+  '246655': 'xmen-apocalypse',
   '263115': 'logan',
   '49538': 'xmen-first-class',
   '36657': 'xmen-2000',
@@ -213,12 +214,12 @@ export const TMDB_ID_MAP: Record<string, string> = {
   '114479': 'secret-invasion',
   '138501': 'echo-2024',
   '114478': 'ironheart-2025',
-  '242095': 'eyes-of-wakanda',
+  '241388': 'eyes-of-wakanda',
   '138504': 'marvel-zombies-2025',
   '204368': 'wonder-man-2025',
   '213796': 'vision-quest-2026',
-  '1024535': 'werewolf-by-night',
-  '774751': 'gotg-holiday-special'
+  '894205': 'werewolf-by-night',
+  '774752': 'gotg-holiday-special'
 };
 
 export function findMovieByInfoQuery(query: string): MarvelTitle | undefined {
