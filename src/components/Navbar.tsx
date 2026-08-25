@@ -100,17 +100,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleNavClick('home')}
           className="flex items-center gap-2.5 cursor-pointer group select-none flex-shrink-0"
         >
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-slate-800 via-slate-900 to-black border border-slate-700 flex items-center justify-center text-white shadow-md group-hover:scale-105 group-hover:border-slate-500 transition-all">
-            <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300 group-hover:text-white transition-colors" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl badge-3d-doom flex items-center justify-center text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.4)] group-hover:scale-105 transition-all">
+            <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-300 group-hover:text-white transition-colors" />
           </div>
           <div>
             <div className="flex items-center gap-1.5 leading-none">
               <span className="text-xs sm:text-sm font-black tracking-[0.1em] text-white uppercase font-sans">
-                <span className="bg-[#E23636] text-white px-1.5 py-[1px] rounded-sm mr-1.5 inline-block text-[10px] sm:text-[11px]">MARVEL</span>
-                <span className="text-white">DOOMSDAY</span>
+                <span className="badge-3d-marvel text-white px-2 py-0.5 rounded mr-1.5 inline-block text-[10px] sm:text-[11px]">MARVEL</span>
+                <span className="font-doom-3d text-emerald-400">DOOMSDAY</span>
               </span>
             </div>
-            <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-slate-400 uppercase block mt-1">
+            <span className="text-[8px] sm:text-[9px] font-black tracking-widest text-slate-400 uppercase block mt-1">
               STREAMING & PREP HUB
             </span>
           </div>
@@ -125,16 +125,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 key={item.id}
                 id={`nav-link-${item.id}`}
                 onClick={() => handleNavClick(item.id)}
-                className={`relative px-3 py-1.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`relative px-3.5 py-1.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 rounded-lg ${
                   isActive
-                    ? 'text-white'
-                    : 'text-slate-400 hover:text-slate-100'
+                    ? 'badge-3d-metallic text-emerald-300 !border-emerald-500/50 shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
                 }`}
               >
                 {item.label}
-                {isActive && (
-                  <span className="absolute bottom-0 inset-x-2 h-0.5 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] rounded-full" />
-                )}
               </button>
             );
           })}
@@ -149,12 +146,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               playClickSound();
               onOpenSearch();
             }}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 sm:py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition-all cursor-pointer shadow-sm hover:scale-105"
+            className="flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl badge-3d-metallic text-slate-300 hover:text-white transition-all cursor-pointer hover:scale-105"
             title="Suche nach Filmen (Strg+K oder /)"
           >
             <Search className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-bold hidden sm:inline">Suche</span>
-            <kbd className="hidden md:inline-block px-1 py-0.5 bg-slate-800 text-[10px] font-mono text-slate-400 rounded border border-slate-700">
+            <span className="text-xs font-black hidden sm:inline">Suche</span>
+            <kbd className="hidden md:inline-block px-1.5 py-0.5 bg-slate-800 text-[9px] font-mono text-slate-400 rounded border border-slate-700">
               ⌘K
             </kbd>
           </button>
@@ -165,14 +162,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => {
               onToggleDoomsdayMode();
             }}
-            className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer select-none ${
+            className={`px-3 py-1.5 sm:py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer select-none hover:scale-105 ${
               doomsdayMode
-                ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)]'
-                : 'bg-emerald-950/70 hover:bg-emerald-900 text-emerald-300 border border-emerald-600/60'
+                ? 'badge-3d-doom !border-emerald-400 text-emerald-300 shadow-[0_0_18px_rgba(16,185,129,0.6)]'
+                : 'badge-3d-doom text-emerald-400'
             }`}
             title="Doomsday Pflichtfilme filtern"
           >
-            <Crown className={`w-3.5 h-3.5 ${doomsdayMode ? 'fill-black' : 'text-emerald-400'}`} />
+            <Crown className={`w-3.5 h-3.5 ${doomsdayMode ? 'fill-emerald-300' : 'text-emerald-400'}`} />
             <span className="hidden sm:inline">{doomsdayMode ? 'DOOMSDAY PFLICHT' : 'DOOMSDAY'}</span>
             <span className="sm:hidden">DOOM</span>
           </button>
@@ -180,10 +177,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* User Watchlist Progress Badge */}
           <button
             onClick={() => handleNavClick('watchlist')}
-            className="flex items-center gap-1.5 p-1 pl-1.5 pr-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 cursor-pointer transition-all hover:scale-105"
+            className="flex items-center gap-1.5 p-1 pl-1.5 pr-2.5 rounded-xl badge-3d-metallic cursor-pointer transition-all hover:scale-105"
             title="Fortschritt deiner Watchlist"
           >
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-black font-black text-[9px] sm:text-[10px]">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-black font-black text-[9px] sm:text-[10px] shadow-sm">
               <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black stroke-[2.5]" />
             </div>
             <span className="text-xs font-black text-emerald-400">
@@ -198,7 +195,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               playClickSound();
               onOpenProfile();
             }}
-            className="relative flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/90 cursor-pointer transition-all hover:scale-105 group"
+            className="relative flex items-center gap-1.5 p-1 sm:px-3 sm:py-1.5 rounded-xl badge-3d-metallic cursor-pointer transition-all hover:scale-105 group"
             title={user ? `${user.displayName || 'Profil'} (Firebase Cloud aktiv)` : 'Firebase Cloud Sync aktivieren'}
           >
             {user?.photoURL ? (

@@ -46,45 +46,45 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     if (movie.isUpcoming || movie.year >= 2026 || movie.id === 'avengers-doomsday') {
       return {
         label: 'KINO 2026',
-        bg: 'bg-emerald-950/90 text-emerald-300 border-emerald-600/70'
+        bg: 'badge-3d-doom text-emerald-300'
       };
     }
     if (movie.id === 'fantastic-four-first-steps') {
       return {
         label: 'KINO 2025',
-        bg: 'bg-sky-950/90 text-sky-300 border-sky-600/70'
+        bg: 'badge-3d-metallic text-sky-300'
       };
     }
     const primary = movie.streaming?.stream?.[0] || movie.streamingPlatform || 'Disney+';
     if (primary.includes('Netflix')) {
       return {
         label: 'NETFLIX',
-        bg: 'bg-red-950/90 text-red-300 border-red-700/70'
+        bg: 'badge-3d-marvel text-white'
       };
     }
     if (primary.includes('Prime')) {
       return {
         label: 'PRIME',
-        bg: 'bg-cyan-950/90 text-cyan-300 border-cyan-700/70'
+        bg: 'badge-3d-metallic text-cyan-300'
       };
     }
     return {
       label: 'DISNEY+',
-      bg: 'bg-blue-950/90 text-blue-300 border-blue-600/70'
+      bg: 'badge-3d-metallic text-blue-300'
     };
   };
 
-  const posterSrc = getMoviePoster(movie.posterUrl, movie.universe, movie.id);
+  const posterSrc = getMoviePoster(movie.posterUrl, movie.universe, movie.id, movie.title);
   const isUpcoming = Boolean(movie.isUpcoming || (movie.releaseDate ? new Date(movie.releaseDate).getTime() > Date.now() : false));
   const provider = getProviderBadge();
 
   return (
     <div
       id={`movie-card-${movie.id}`}
-      className={`group relative flex flex-col justify-between rounded-xl bg-gradient-to-b from-[#0e1420] to-[#06090e] border transition-all duration-300 overflow-hidden shadow-lg select-none ${
+      className={`group relative flex flex-col justify-between rounded-xl card-3d-titanium transition-all duration-300 overflow-hidden select-none ${
         isWatched 
-          ? 'border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.12)] ring-1 ring-emerald-500/20' 
-          : 'border-slate-800/80 hover:border-slate-600 hover:shadow-[0_12px_28px_rgba(0,0,0,0.85)] hover:-translate-y-1'
+          ? 'border-emerald-500/50 shadow-[0_0_16px_rgba(16,185,129,0.2)] ring-1 ring-emerald-500/30' 
+          : 'border-slate-800/90 hover:border-emerald-500/50 hover:shadow-[0_12px_28px_rgba(0,0,0,0.95)] hover:-translate-y-1'
       }`}
     >
       {/* Cover Image Container (Poster Priority 1) */}
@@ -117,7 +117,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-[#06090e] via-transparent to-black/60 pointer-events-none" />
 
         {/* Hover Quick Actions Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/65 backdrop-blur-[2px]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/75 backdrop-blur-[3px]">
           {onOpenTrailer && (
             <button
               onClick={(e) => {
@@ -125,7 +125,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                 playClickSound();
                 onOpenTrailer(movie);
               }}
-              className="px-4 py-1.5 rounded-full bg-white text-black font-bold text-xs uppercase tracking-wider shadow-md hover:bg-slate-200 hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-1.5 rounded-full bg-white text-black font-black text-xs uppercase tracking-wider shadow-[0_4px_12px_rgba(255,255,255,0.35)] hover:bg-slate-200 hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5"
               title={movie.hintClips ? "Clips & Teaser" : (isUpcoming ? "Teaser ansehen" : "Trailer abspielen")}
             >
               <Play className="w-3.5 h-3.5 fill-black ml-0.5" />
@@ -139,7 +139,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               playClickSound();
               onSelectMovie(movie);
             }}
-            className="px-3.5 py-1 rounded-full bg-slate-900 text-slate-200 border border-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-all flex items-center gap-1 cursor-pointer"
+            className="px-3.5 py-1 rounded-full badge-3d-metallic text-slate-200 font-bold text-xs uppercase tracking-wider hover:text-white transition-all flex items-center gap-1 cursor-pointer"
           >
             <Info className="w-3 h-3 text-slate-200" />
             <span>Details</span>
@@ -150,11 +150,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         <div className="absolute top-2 inset-x-2 flex items-center justify-between gap-1 pointer-events-none z-10">
           {/* Left: Provider & Importance */}
           <div className="flex items-center gap-1 flex-shrink min-w-0">
-            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border backdrop-blur-md truncate ${provider.bg}`}>
+            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded truncate ${provider.bg}`}>
               {provider.label}
             </span>
             {movie.priority === 'ESSENTIAL' && (
-              <span className="text-[9px] font-black text-amber-300 bg-amber-950/90 px-1.5 py-0.5 rounded border border-amber-600/80 uppercase shadow-sm flex-shrink-0">
+              <span className="text-[9px] font-black text-amber-200 badge-3d-metallic !border-amber-500/60 px-1.5 py-0.5 rounded uppercase shadow-md flex-shrink-0">
                 PFLICHT
               </span>
             )}
@@ -163,17 +163,17 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           {/* Right: Watch Status Badge */}
           <div className="flex-shrink-0">
             {isWatched ? (
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-950/90 border border-emerald-500/80 text-emerald-300 font-black text-[9px] tracking-wider uppercase backdrop-blur-md shadow-md">
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded badge-3d-doom text-emerald-300 font-black text-[9px] tracking-wider uppercase">
                 <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 <span>GESEHEN</span>
               </div>
             ) : watchStatus === 'IN_PROGRESS' ? (
-              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-sky-950/90 border border-sky-500/80 text-sky-300 font-black text-[9px] tracking-wider uppercase backdrop-blur-md shadow-md">
+              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded badge-3d-metallic text-sky-300 font-black text-[9px] tracking-wider uppercase">
                 <Clock className="w-3 h-3 text-sky-400" />
                 <span>IN ARBEIT</span>
               </div>
             ) : isUpcoming ? (
-              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/85 border border-amber-500/60 text-amber-400 font-black text-[9px] tracking-wider uppercase backdrop-blur-md shadow-md">
+              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded badge-3d-metallic text-amber-400 font-black text-[9px] tracking-wider uppercase">
                 2026
               </div>
             ) : null}
@@ -183,16 +183,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         {/* Bottom Metadata Info: Type, Year, Runtime, Phase */}
         <div className="absolute bottom-2 inset-x-2 flex items-center justify-between text-[10px] font-bold text-slate-300 pointer-events-none z-10">
           <div className="flex items-center gap-1.5">
-            <span className="flex items-center gap-1 bg-black/80 px-1.5 py-0.5 rounded border border-slate-700 backdrop-blur-md">
+            <span className="flex items-center gap-1 badge-3d-metallic px-1.5 py-0.5 rounded text-slate-300">
               {movie.type === 'SERIES' ? <Tv className="w-3 h-3 text-slate-300" /> : <Film className="w-3 h-3 text-emerald-400" />}
               {movie.year}
             </span>
-            <span className="bg-black/80 px-1.5 py-0.5 rounded border border-slate-700 backdrop-blur-md">
+            <span className="badge-3d-metallic px-1.5 py-0.5 rounded text-slate-300">
               {movie.runtimeMinutes}m
             </span>
           </div>
 
-          <span className="bg-black/80 px-1.5 py-0.5 rounded border border-slate-700 text-slate-400 backdrop-blur-md">
+          <span className="badge-3d-metallic px-1.5 py-0.5 rounded text-slate-300">
             {movie.phase}
           </span>
         </div>
@@ -207,7 +207,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               playClickSound();
               onSelectMovie(movie);
             }}
-            className="text-xs sm:text-sm font-bold text-slate-100 group-hover:text-white transition-colors line-clamp-1 cursor-pointer tracking-tight"
+            className="text-xs sm:text-sm font-bold text-slate-100 group-hover:text-emerald-300 transition-colors line-clamp-1 cursor-pointer tracking-tight drop-shadow-sm"
             title={movie.title}
           >
             {movie.title}
@@ -230,8 +230,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             }}
             className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center gap-1 cursor-pointer ${
               isWatched
-                ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/70 shadow-sm'
-                : 'bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                ? 'badge-3d-doom text-emerald-300'
+                : 'badge-3d-metallic hover:text-white text-slate-200'
             }`}
           >
             {isWatched ? <Check className="w-3 h-3 stroke-[3] text-emerald-400" /> : null}

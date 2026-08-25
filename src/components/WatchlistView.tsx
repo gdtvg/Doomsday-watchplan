@@ -362,7 +362,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-12 h-16 rounded-md overflow-hidden flex-shrink-0 bg-slate-950">
                     <img referrerPolicy="no-referrer"
-                      src={getMoviePoster(movie.posterUrl, movie.universe, movie.id)}
+                      src={getMoviePoster(movie.posterUrl, movie.universe, movie.id, movie.title)}
                       alt={movie.title}
                       className="w-full h-full object-cover object-center"
                       onError={(e) => {

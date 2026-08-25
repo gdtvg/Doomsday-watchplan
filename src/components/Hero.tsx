@@ -282,33 +282,33 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="max-w-2xl lg:max-w-3xl space-y-2.5">
           
           {/* Subtle Tag */}
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded bg-[#E23636] text-white font-black text-[10px] sm:text-[11px] uppercase tracking-wider">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-3 py-1 rounded-lg badge-3d-marvel text-white font-black text-[10px] sm:text-[11px] uppercase tracking-wider">
               {current.topBadge}
             </span>
-            <span className="text-slate-300 font-semibold text-xs">
+            <span className="badge-3d-metallic text-slate-200 font-black text-xs px-2 py-0.5 rounded">
               {current.ageRating}
             </span>
-            <span className="text-slate-400 text-xs hidden sm:inline font-bold">
-              • {current.loreTag}
+            <span className="badge-3d-doom text-emerald-300 font-bold text-xs px-2 py-0.5 rounded hidden sm:inline">
+              {current.loreTag}
             </span>
           </div>
 
           {/* Heading */}
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             {current.logoUrl ? (
               <img 
                 src={current.logoUrl} 
                 alt={current.title}
-                className="h-20 sm:h-28 md:h-36 lg:h-44 object-contain object-left drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] filter transition-all"
+                className="h-20 sm:h-28 md:h-36 lg:h-44 object-contain object-left drop-shadow-[0_8px_16px_rgba(0,0,0,0.9)] filter transition-all"
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-wider text-white drop-shadow-lg leading-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-wider font-marvel-3d leading-tight">
                 {current.title}
               </h1>
             )}
-            <p className="text-xs sm:text-sm font-semibold tracking-wider text-slate-300 uppercase mt-2">
+            <p className="text-xs sm:text-sm font-black tracking-widest text-emerald-400 uppercase drop-shadow-md">
               {current.subtitle}
             </p>
           </div>
@@ -318,12 +318,12 @@ export const Hero: React.FC<HeroProps> = ({
             {current.logline}
           </p>
 
-          {/* Clean Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2.5 pt-1">
+          {/* Clean Action Buttons with 3D Depth */}
+          <div className="flex flex-wrap items-center gap-2.5 pt-2">
             <button
               id="hero-play-trailer-btn"
               onClick={() => onOpenTrailer(matchedMovie)}
-              className="px-5 py-2.5 rounded-lg font-bold text-xs sm:text-sm uppercase tracking-wider text-black bg-white hover:bg-slate-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              className="px-5 py-2.5 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider text-black bg-white hover:bg-slate-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_16px_rgba(255,255,255,0.4)] hover:scale-105"
             >
               <Play className="w-4 h-4 fill-black" />
               <span>Trailer ansehen</span>
@@ -331,7 +331,7 @@ export const Hero: React.FC<HeroProps> = ({
 
             <button
               onClick={() => onSelectMovie(matchedMovie)}
-              className="px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm uppercase tracking-wider text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider text-slate-200 badge-3d-metallic hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
             >
               <Info className="w-4 h-4 text-white" />
               <span>Details</span>
@@ -340,7 +340,7 @@ export const Hero: React.FC<HeroProps> = ({
             <button
               id="hero-start-watchlist-btn"
               onClick={onStartWatchlist}
-              className="px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm uppercase tracking-wider text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider text-slate-200 badge-3d-metallic hover:text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-105"
             >
               <Plus className="w-4 h-4 text-white" />
               <span>Watchlist</span>
@@ -352,10 +352,10 @@ export const Hero: React.FC<HeroProps> = ({
                 playDoomsdayAlarmSound();
                 onActivateDoomsdayEssentials();
               }}
-              className={`px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer border ${
+              className={`px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-105 ${
                 doomsdayMode 
-                  ? 'bg-emerald-500 text-black border-emerald-400 font-black shadow-[0_0_15px_rgba(16,185,129,0.5)]' 
-                  : 'bg-slate-900/90 hover:bg-slate-800 text-emerald-300 border-emerald-600/80'
+                  ? 'badge-3d-doom !border-emerald-400 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)]' 
+                  : 'badge-3d-doom text-emerald-400'
               }`}
             >
               <Crown className="w-4 h-4" />
@@ -365,7 +365,7 @@ export const Hero: React.FC<HeroProps> = ({
             {/* Trailer Settings Modal Trigger */}
             <button
               onClick={() => setShowSettingsModal(true)}
-              className="p-2.5 rounded-lg bg-slate-900/60 hover:bg-slate-800 border border-slate-700/80 text-slate-400 hover:text-white transition-all cursor-pointer"
+              className="p-2.5 rounded-xl badge-3d-metallic text-slate-400 hover:text-white transition-all cursor-pointer"
               title="Trailer Auto-Play Einstellungen"
             >
               <Settings className="w-4 h-4" />

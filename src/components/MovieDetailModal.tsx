@@ -129,7 +129,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
         {/* 1. Backdrop Hero Banner (Dulo / Streaming High-Res Banner) */}
         <div className="relative h-48 sm:h-64 md:h-72 w-full overflow-hidden bg-slate-950 flex-shrink-0">
           <img referrerPolicy="no-referrer"
-            src={getMovieBackdrop(movie.backdropUrl, movie.posterUrl, movie.universe)}
+            src={getMovieBackdrop(movie.backdropUrl, movie.posterUrl, movie.universe, movie.id)}
             alt={movie.title}
             className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
             onError={(e) => {
@@ -185,7 +185,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({
             <div className="w-40 sm:w-48 md:w-56 flex-shrink-0 mx-auto md:mx-0 space-y-3">
               <div className="aspect-[2/3] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-700/80 shadow-[0_12px_40px_rgba(0,0,0,0.9)] relative group">
                 <img referrerPolicy="no-referrer"
-                  src={getMoviePoster(movie.posterUrl, movie.universe, movie.id)}
+                  src={getMoviePoster(movie.posterUrl, movie.universe, movie.id, movie.title)}
                   alt={movie.title}
                   className="w-full h-full object-cover object-center"
                   onError={(e) => {

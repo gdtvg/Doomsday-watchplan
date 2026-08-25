@@ -52,62 +52,62 @@ export const CountdownTimer: React.FC = () => {
   }, []);
 
   return (
-    <div id="doomsday-countdown" className="w-full bg-[#070C14] border-y border-slate-800/60 py-3.5 px-4 shadow-sm">
+    <div id="doomsday-countdown" className="w-full bg-[#060A10] border-y border-slate-800/80 py-3.5 px-4 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
         {/* Label */}
         <div className="flex items-center gap-3 text-left w-full sm:w-auto">
-          <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700 shadow-sm flex items-center justify-center text-slate-300 flex-shrink-0 relative overflow-hidden">
-            <Crown className="w-4 h-4 relative z-10" />
+          <div className="w-10 h-10 rounded-xl badge-3d-doom flex items-center justify-center text-emerald-300 flex-shrink-0 relative overflow-hidden shadow-[0_0_15px_rgba(16,185,129,0.35)]">
+            <Crown className="w-5 h-5 relative z-10" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black tracking-widest text-[#E23636] uppercase drop-shadow-sm">
-                COUNTDOWN
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-black tracking-widest badge-3d-marvel px-2 py-0.5 rounded text-white uppercase">
+                DOOMSDAY COUNTDOWN
               </span>
-              <span className="text-[10px] text-slate-400 font-semibold uppercase">
+              <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
                 • Kinostart: {DOOMSDAY_RELEASE_DISPLAY}
               </span>
             </div>
-            <h3 className="text-xs sm:text-sm font-bold text-white tracking-tight">
-              Avengers: Doomsday (Multiverse Saga)
+            <h3 className="text-xs sm:text-sm font-black text-white tracking-tight mt-0.5 font-bebas uppercase text-base sm:text-lg">
+              Avengers: Doomsday — Multiverse Saga Finale
             </h3>
           </div>
         </div>
 
         {/* Counter Grid */}
         <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-end">
-          <div className="flex items-baseline gap-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 shadow-sm">
-            <span className="text-base sm:text-lg font-black text-white tabular-nums drop-shadow-sm">
+          <div className="flex items-baseline gap-1.5 badge-3d-metallic rounded-xl px-3.5 py-1.5 shadow-md">
+            <span className="text-lg sm:text-xl font-black text-white tabular-nums drop-shadow-md font-bebas">
               {timeLeft.days}
             </span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
               Tage
             </span>
           </div>
 
-          <div className="flex items-baseline gap-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 shadow-sm">
-            <span className="text-base sm:text-lg font-black text-white tabular-nums drop-shadow-sm">
+          <div className="flex items-baseline gap-1.5 badge-3d-metallic rounded-xl px-3.5 py-1.5 shadow-md">
+            <span className="text-lg sm:text-xl font-black text-white tabular-nums drop-shadow-md font-bebas">
               {String(timeLeft.hours).padStart(2, '0')}
             </span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
               Std
             </span>
           </div>
 
-          <div className="flex items-baseline gap-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 shadow-sm">
-            <span className="text-base sm:text-lg font-black text-white tabular-nums drop-shadow-sm">
+          <div className="flex items-baseline gap-1.5 badge-3d-metallic rounded-xl px-3.5 py-1.5 shadow-md">
+            <span className="text-lg sm:text-xl font-black text-white tabular-nums drop-shadow-md font-bebas">
               {String(timeLeft.minutes).padStart(2, '0')}
             </span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
               Min
             </span>
           </div>
 
-          <div className="flex items-baseline gap-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 shadow-sm">
-            <span className="text-base sm:text-lg font-black text-slate-200 tabular-nums drop-shadow-sm">
+          <div className="flex items-baseline gap-1.5 badge-3d-doom rounded-xl px-3.5 py-1.5 shadow-md">
+            <span className="text-lg sm:text-xl font-black text-emerald-300 tabular-nums drop-shadow-md font-bebas">
               {String(timeLeft.seconds).padStart(2, '0')}
             </span>
-            <span className="text-[10px] font-bold text-slate-300 uppercase">
+            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-wider">
               Sek
             </span>
           </div>

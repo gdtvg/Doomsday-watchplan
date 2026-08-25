@@ -75,12 +75,12 @@ const HorizontalRow: React.FC<HorizontalRowProps> = ({
             <h3 className="text-sm sm:text-base lg:text-lg font-black text-slate-100 tracking-tight flex items-center gap-2">
               <span>{title}</span>
               {isTop10 && (
-                <span className="text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white text-black tracking-wider shadow-sm">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 rounded badge-3d-marvel text-white tracking-wider">
                   TOP 10
                 </span>
               )}
             </h3>
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+            <span className="text-[10px] font-black px-1.5 py-0.5 rounded badge-3d-metallic text-slate-400">
               {items.length}
             </span>
           </div>
@@ -94,14 +94,14 @@ const HorizontalRow: React.FC<HorizontalRowProps> = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => scroll('left')}
-              className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+              className="p-2 rounded-full badge-3d-metallic text-slate-300 hover:text-white transition-all cursor-pointer hover:scale-105"
               title="Nach links"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+              className="p-2 rounded-full badge-3d-metallic text-slate-300 hover:text-white transition-all cursor-pointer hover:scale-105"
               title="Nach rechts"
             >
               <ChevronRight className="w-4 h-4" />
@@ -123,9 +123,9 @@ const HorizontalRow: React.FC<HorizontalRowProps> = ({
                 key={movie.id}
                 className="relative flex items-end min-w-[205px] sm:min-w-[240px] max-w-[260px] flex-shrink-0 snap-start group/top10"
               >
-                {/* Authentic Streaming Giant Metallic Rank Number */}
+                {/* Authentic Streaming Giant 3D Metallic Rank Number */}
                 <div className="w-10 sm:w-14 flex-shrink-0 flex items-end justify-center select-none pointer-events-none pb-12 pr-1 -mr-2 z-0">
-                  <span className="text-6xl sm:text-8xl font-black font-bebas text-transparent bg-clip-text bg-gradient-to-b from-slate-100 via-slate-400 to-slate-700 drop-shadow-[0_8px_16px_rgba(0,0,0,0.9)] tracking-tighter leading-none group-hover/top10:from-amber-200 group-hover/top10:to-amber-500 transition-all">
+                  <span className="text-6xl sm:text-8xl font-black font-bebas stroke-number text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-300 to-slate-600 drop-shadow-[0_10px_20px_rgba(0,0,0,0.95)] tracking-tighter leading-none group-hover/top10:from-amber-200 group-hover/top10:via-amber-400 group-hover/top10:to-amber-600 transition-all">
                     {rank}
                   </span>
                 </div>

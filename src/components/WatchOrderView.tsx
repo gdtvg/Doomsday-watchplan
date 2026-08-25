@@ -227,7 +227,7 @@ export const WatchOrderView: React.FC<WatchOrderViewProps> = ({
         <div className="space-y-3">
           {routeTitles.map((movie, index) => {
             const isWatched = !!userData[movie.id]?.watched;
-            const posterSrc = getMoviePoster(movie.posterUrl, movie.universe, movie.id);
+            const posterSrc = getMoviePoster(movie.posterUrl, movie.universe, movie.id, movie.title);
 
             return (
               <div

@@ -48,10 +48,16 @@ export function useWatchlist() {
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
   const [syncStatus, setSyncStatus] = useState<CloudSyncStatus>('local');
 
+  // Helper to get user-specific storage key
+  const getStorageKey = (user: User | null) => {
+    return user ? `marvel_watchlist_user_${user.uid}` : 'marvel_watchlist_guest';
+  };
+
   // --- Persistent User Data ---
   const [userData, setUserData] = useState<Record<string, UserTitleData>>(() => {
     try {
-      const stored = localStorage.getItem(APP_CONFIG.storageKey);
+      const key = auth.currentUser ? `marvel_watchlist_user_${auth.currentUser.uid}` : 'marvel_watchlist_guest';
+      const stored = localStorage.getItem(key) || localStorage.getItem(APP_CONFIG.storageKey);
       if (stored) {
         return JSON.parse(stored);
       }
@@ -92,25 +98,46 @@ export function useWatchlist() {
     return saved || DOOMSDAY_RELEASE_DATE.split('T')[0];
   });
 
-  // Auth State Listener
+  // Auth State Listener - Cleanly switch data sets per user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       if (!user) {
         setSyncStatus('local');
+        // When logged out, load guest data
+        try {
+          const guestStored = localStorage.getItem('marvel_watchlist_guest');
+          setUserData(guestStored ? JSON.parse(guestStored) : {});
+        } catch (e) {
+          setUserData({});
+        }
+      } else {
+        // When switched to an authenticated user, load their local cache first
+        try {
+          const userStored = localStorage.getItem(`marvel_watchlist_user_${user.uid}`);
+          if (userStored) {
+            setUserData(JSON.parse(userStored));
+          } else {
+            // Fresh user without local cache -> start clean, let Firestore populate
+            setUserData({});
+          }
+        } catch (e) {
+          setUserData({});
+        }
       }
     });
     return () => unsubscribe();
   }, []);
 
-  // Save changes to localStorage as offline mirror
+  // Save changes to localStorage as offline mirror for CURRENT user
   useEffect(() => {
     try {
-      localStorage.setItem(APP_CONFIG.storageKey, JSON.stringify(userData));
+      const key = getStorageKey(currentUser);
+      localStorage.setItem(key, JSON.stringify(userData));
     } catch (e) {
       console.error('Failed to save to localStorage', e);
     }
-  }, [userData]);
+  }, [userData, currentUser]);
 
   useEffect(() => {
     localStorage.setItem('marvel_doomsday_mode', String(doomsdayMode));
@@ -154,12 +181,13 @@ export function useWatchlist() {
           };
         });
 
-        // Merge local data with cloud data
-        setUserData((prevLocal) => {
-          const merged = { ...prevLocal, ...cloudData };
-          return merged;
-        });
-
+        // Set authoritative cloud data for this authenticated user
+        setUserData(cloudData);
+        try {
+          localStorage.setItem(`marvel_watchlist_user_${currentUser.uid}`, JSON.stringify(cloudData));
+        } catch (e) {
+          // ignore
+        }
         setSyncStatus('synced');
       },
       (error) => {
