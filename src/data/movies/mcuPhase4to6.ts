@@ -350,7 +350,7 @@ export const MCU_PHASE_4_TO_6_TITLES: MarvelTitle[] = [
   // 32. Guardians of the Galaxy Vol. 3 (2023) [S - OPTIONAL]
   {
     id: 'guardians-galaxy-vol-3',
-    tmdbId: 774752,
+    tmdbId: 447365,
     title: 'Guardians of the Galaxy Vol. 3',
     originalTitle: 'Guardians of the Galaxy Vol. 3',
     tagline: 'Noch einmal mit Gefühl.',
@@ -525,7 +525,7 @@ export const MCU_PHASE_4_TO_6_TITLES: MarvelTitle[] = [
   // 36. The Fantastic Four: First Steps (2025) [P - ESSENTIAL]
   {
     id: 'fantastic-four-first-steps',
-    tmdbId: 1003596,
+    tmdbId: 617126,
     title: 'The Fantastic Four: First Steps',
     originalTitle: 'The Fantastic Four: First Steps',
     tagline: 'Marvels First Family betritt die Bühne.',
@@ -611,7 +611,7 @@ export const MCU_PHASE_4_TO_6_TITLES: MarvelTitle[] = [
   // AVENGERS: DOOMSDAY (2026) [P - ESSENTIAL EVENT]
   {
     id: 'avengers-doomsday',
-    tmdbId: 1003598,
+    tmdbId: 1003596,
     title: 'Avengers: Doomsday',
     originalTitle: 'Avengers: Doomsday',
     tagline: 'Alle Wege führen zu Doom.',
@@ -658,7 +658,7 @@ export const MCU_PHASE_4_TO_6_TITLES: MarvelTitle[] = [
   // AVENGERS: SECRET WARS (2027) [P - ESSENTIAL EVENT]
   {
     id: 'avengers-secret-wars',
-    tmdbId: 1003599,
+    tmdbId: 1003598,
     title: 'Avengers: Secret Wars',
     originalTitle: 'Avengers: Secret Wars',
     tagline: 'Das Ende aller Zeiten. Die Wiedergeburt eines Universums.',

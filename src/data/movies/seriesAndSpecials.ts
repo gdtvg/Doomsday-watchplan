@@ -736,7 +736,7 @@ export const SERIES_AND_SPECIALS_TITLES: MarvelTitle[] = [
   // 18. Eyes of Wakanda (2025) [S - OPTIONAL]
   {
     id: 'eyes-of-wakanda',
-    tmdbId: 242095,
+    tmdbId: 241388,
     title: 'Eyes of Wakanda',
     originalTitle: 'Eyes of Wakanda',
     tagline: 'Die Krieger, die die Geheimnisse Wakandas bewahrten.',
@@ -900,7 +900,7 @@ export const SERIES_AND_SPECIALS_TITLES: MarvelTitle[] = [
   // SPECIAL: Werewolf by Night (2022) [S - OPTIONAL]
   {
     id: 'werewolf-by-night',
-    tmdbId: 1024535,
+    tmdbId: 894205,
     title: 'Werewolf by Night',
     originalTitle: 'Werewolf by Night',
     tagline: 'Es gibt kein Entkommen vor der Nacht.',
@@ -940,7 +940,7 @@ export const SERIES_AND_SPECIALS_TITLES: MarvelTitle[] = [
   // SPECIAL: The Guardians of the Galaxy Holiday Special (2022) [S - OPTIONAL]
   {
     id: 'gotg-holiday-special',
-    tmdbId: 774751,
+    tmdbId: 774752,
     title: 'The Guardians of the Galaxy Holiday Special',
     originalTitle: 'The Guardians of the Galaxy Holiday Special',
     tagline: 'Das galaktischste Weihnachtsfest.',

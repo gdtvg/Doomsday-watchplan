@@ -173,7 +173,7 @@ export const XMEN_LEGACY_TITLES: MarvelTitle[] = [
   // 05. X-Men: Days of Future Past (2014) [P - ESSENTIAL]
   {
     id: 'xmen-days-of-future-past',
-    tmdbId: 246655,
+    tmdbId: 127585,
     title: 'X-Men: Days of Future Past',
     originalTitle: 'X-Men: Days of Future Past',
     tagline: 'Mutanten und Menschen müssen sich vereinen, um ihre Zukunft zu retten.',
